@@ -40,7 +40,7 @@ $studentName = $_SESSION["student_name"] ?? "Student";
         </p>
 
         <p>
-            <a href="../src/profile.html">My Profile</a>
+            <a href="profile.php">My Profile</a>
         </p>
 
         <p>
