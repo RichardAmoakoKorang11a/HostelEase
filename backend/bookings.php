@@ -41,9 +41,12 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>My Bookings - HostelEase</title>
+
     <link rel="stylesheet" href="../src/style.css">
 </head>
+
 <body>
 
 <header>
@@ -52,8 +55,26 @@ try {
 </header>
 
 <main>
+
     <section class="form-container">
+
         <h2>My Bookings</h2>
+
+        <?php if (isset($_GET["message"]) && $_GET["message"] === "cancelled"): ?>
+
+            <p style="color: green;">
+                Your booking has been cancelled successfully.
+            </p>
+
+        <?php endif; ?>
+
+        <?php if (isset($_GET["error"])): ?>
+
+            <p style="color: red;">
+                Unable to cancel this booking. It may already be cancelled or approved.
+            </p>
+
+        <?php endif; ?>
 
         <?php if (empty($bookings)): ?>
 
@@ -64,42 +85,87 @@ try {
             <?php foreach ($bookings as $booking): ?>
 
                 <article>
+
                     <h3>
                         <?= htmlspecialchars($booking["hostel_name"]) ?>
                     </h3>
 
                     <p>
-                        Location:
+                        <strong>Location:</strong>
                         <?= htmlspecialchars($booking["location"]) ?>
                     </p>
 
                     <p>
-                        Price: GH₵
-                        <?= number_format((float)$booking["price"], 2) ?>
+                        <strong>Price:</strong>
+                        GH₵ <?= number_format((float)$booking["price"], 2) ?>
                     </p>
 
                     <p>
-                        Booking Date:
+                        <strong>Booking Date:</strong>
                         <?= htmlspecialchars($booking["booking_date"]) ?>
                     </p>
 
                     <p>
-                        Status:
-                        <strong>
-                            <?= htmlspecialchars($booking["status"]) ?>
-                        </strong>
+                        <strong>Booking Status:</strong>
+                        <?= htmlspecialchars($booking["status"]) ?>
                     </p>
 
+                    <?php if ($booking["status"] === "Pending"): ?>
+
+                        <form
+                            action="cancel_booking.php"
+                            method="POST"
+                            onsubmit="return confirm('Are you sure you want to cancel this booking?');"
+                        >
+
+                            <input
+                                type="hidden"
+                                name="booking_id"
+                                value="<?= (int)$booking["booking_id"] ?>"
+                            >
+
+                            <button type="submit">
+                                Cancel Booking
+                            </button>
+
+                        </form>
+
+                    <?php elseif ($booking["status"] === "Cancelled"): ?>
+
+                        <p style="color: red;">
+                            This booking has been cancelled.
+                        </p>
+
+                    <?php else: ?>
+
+                        <p>
+                            This booking cannot be cancelled from this page.
+                        </p>
+
+                    <?php endif; ?>
+
                     <hr>
+
                 </article>
 
             <?php endforeach; ?>
 
         <?php endif; ?>
 
-        <p><a href="hostels.php">Browse Hostels</a></p>
-        <p><a href="dashboard.php">Back to Dashboard</a></p>
+        <p>
+            <a href="hostels.php">Browse Hostels</a>
+        </p>
+
+        <p>
+            <a href="dashboard.php">Back to Dashboard</a>
+        </p>
+
+        <p>
+            <a href="logout.php">Logout</a>
+        </p>
+
     </section>
+
 </main>
 
 <footer>
