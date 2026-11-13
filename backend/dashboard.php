@@ -36,9 +36,7 @@ $studentName = $_SESSION["student_name"] ?? "Student";
         <p>
             <a href="hostels.php">View Available Hostels</a>
         </p>
-
-        <p>
-            <a href="../src/bookings.html">My Bookings</a>
+            <a href="bookings.php">My Bookings</a>
         </p>
 
         <p>
