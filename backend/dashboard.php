@@ -7,7 +7,7 @@ if (!isset($_SESSION["student_id"])) {
     exit();
 }
 
-$student_name = htmlspecialchars($_SESSION["student_name"]);
+$studentName = $_SESSION["student_name"] ?? "Student";
 ?>
 
 <!DOCTYPE html>
@@ -15,30 +15,30 @@ $student_name = htmlspecialchars($_SESSION["student_name"]);
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HostelEase | Student Dashboard</title>
+    <title>Dashboard - HostelEase</title>
     <link rel="stylesheet" href="../src/style.css">
 </head>
 <body>
 
 <header>
     <h1>HostelEase</h1>
-    <p>Student Dashboard</p>
+    <p>Student Accommodation Management System</p>
 </header>
 
 <main>
     <section class="form-container">
-        <h2>Welcome, <?php echo $student_name; ?>!</h2>
+        <h2>Welcome, <?= htmlspecialchars($studentName) ?>!</h2>
 
-        <p>Welcome to your HostelEase student dashboard.</p>
+        <p>You have successfully logged into HostelEase.</p>
 
-        <h3>Available Services</h3>
+        <h3>Dashboard Menu</h3>
 
         <p>
-            <a href="../src/hostels.html">Browse Available Hostels</a>
+            <a href="hostels.php">View Available Hostels</a>
         </p>
 
         <p>
-            <a href="../src/bookings.html">View My Bookings</a>
+            <a href="../src/bookings.html">My Bookings</a>
         </p>
 
         <p>
