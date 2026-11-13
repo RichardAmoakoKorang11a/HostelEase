@@ -17,9 +17,12 @@
     <main>
         <section class="form-container">
             <h2>Student Login</h2>
-            <p>Welcome back! Please log in to your account.</p>
+            <p>Welcome back! Please log in.</p>
 
-            <form action="#" method="POST">
+            <form id="loginForm"
+                  action="../backend/login.php"
+                  method="POST">
+
                 <label for="email">Email Address</label>
                 <input
                     type="email"
@@ -53,6 +56,8 @@
     <footer>
         <p>&copy; 2026 HostelEase. All rights reserved.</p>
     </footer>
+
+    <script src="script.js"></script>
 
 </body>
 </html>
