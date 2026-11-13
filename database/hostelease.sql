@@ -35,3 +35,29 @@ CREATE TABLE bookings (
     FOREIGN KEY (student_id) REFERENCES students(student_id),
     FOREIGN KEY (hostel_id) REFERENCES hostels(hostel_id)
 );
+USE hostelease_db;
+
+INSERT INTO hostels
+(hostel_name, location, price, description, availability)
+VALUES
+(
+    'Royal Hostel',
+    'Kumasi',
+    2500.00,
+    'Comfortable student accommodation with essential facilities.',
+    'Available'
+),
+(
+    'Victory Hostel',
+    'Kumasi',
+    3000.00,
+    'Modern student accommodation with a convenient location.',
+    'Available'
+),
+(
+    'Peace Hostel',
+    'Kumasi',
+    2000.00,
+    'Affordable accommodation suitable for students.',
+    'Available'
+);
