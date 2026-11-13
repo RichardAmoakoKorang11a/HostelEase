@@ -31,11 +31,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION["student_id"] = $student["student_id"];
             $_SESSION["student_name"] = $student["full_name"];
 
-            echo "Login successful! Welcome, "
-                . htmlspecialchars($student["full_name"]) . ".";
+            header("Location: dashboard.php");
+            exit();
 
         } else {
-            echo "Incorrect email or password.";
+            die("Incorrect email or password. Please try again.");
         }
 
     } catch (PDOException $e) {
