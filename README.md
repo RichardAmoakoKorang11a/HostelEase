@@ -64,9 +64,18 @@ HostelEase/
 │   ├── SRS.md                    # IEEE 830 Software Requirements Specification
 │   ├── UML_DIAGRAMS.md           # Mermaid UML Diagrams (Class, Sequence, etc.)
 │   ├── RISK_REGISTER_SPRINT_PLANS.md # Risk matrix & Sprint 1-3 plans
-│   └── PRESENTATION_AND_REFLECTIONS.md # 10-minute demo script & 5 reflections
+│   ├── PRESENTATION_AND_REFLECTIONS.md # 10-minute demo script & 5 reflections
+│   └── diagrams/                 # 7 High-Resolution SVG Architectural Drawings
+│       ├── use_case_diagram.svg
+│       ├── class_diagram.svg
+│       ├── sequence_diagram.svg
+│       ├── activity_diagram.svg
+│       ├── er_diagram.svg
+│       ├── architecture_diagram.svg
+│       └── sprint_roadmap.svg
 ├── public/
-│   └── index.html                # Responsive Tailwind CSS frontend
+│   ├── index.html                # Responsive Tailwind CSS frontend
+│   └── diagrams.html             # Interactive Architecture Studio & Diagram Viewer
 ├── src/
 │   ├── server.js                 # Express application & API routing
 │   ├── config/

@@ -14,26 +14,39 @@ db.serialize(() => {
         });
     }
 
-    db.get("SELECT COUNT(*) as count FROM users", (err, row) => {
+    // Ensure Hostels exist
+    db.get("SELECT COUNT(*) as count FROM hostels", (err, row) => {
         if (!err && (!row || row.count === 0)) {
-            // Seed Hostels
             db.run("INSERT INTO hostels (name, campus_location, gender_type) VALUES ('Akuafo Hall', 'Main Campus', 'MIXED')");
             db.run("INSERT INTO hostels (name, campus_location, gender_type) VALUES ('Commonwealth Hall', 'Upper Hill', 'MALE')");
             db.run("INSERT INTO hostels (name, campus_location, gender_type) VALUES ('Volta Hall', 'Lower Campus', 'FEMALE')");
 
-            // Seed Rooms
             db.run("INSERT INTO rooms (hostel_id, room_number, capacity, price_per_semester, status) VALUES (1, 'Room 101', 1, 1500.00, 'AVAILABLE')");
             db.run("INSERT INTO rooms (hostel_id, room_number, capacity, price_per_semester, status) VALUES (1, 'Room 102', 1, 1500.00, 'AVAILABLE')");
             db.run("INSERT INTO rooms (hostel_id, room_number, capacity, price_per_semester, status) VALUES (2, 'Room 205', 1, 1800.00, 'AVAILABLE')");
             db.run("INSERT INTO rooms (hostel_id, room_number, capacity, price_per_semester, status) VALUES (3, 'Room 312', 1, 1600.00, 'AVAILABLE')");
-
-            // Seed Group 2 Team Members
-            db.run("INSERT INTO users (student_id, full_name, email, phone) VALUES ('5240101411', 'Osei Sarfo Raphael', 'raphael@campus.edu', '+233240000001')");
-            db.run("INSERT INTO users (student_id, full_name, email, phone) VALUES ('5240101412', 'Adjei Douglas', 'douglas@campus.edu', '+233240000002')");
-            db.run("INSERT INTO users (student_id, full_name, email, phone) VALUES ('5240101413', 'Richard Amoako Korang', 'richard@campus.edu', '+233240000003')");
-            db.run("INSERT INTO users (student_id, full_name, email, phone) VALUES ('5240101414', 'Ibrahim Mohammed', 'ibrahim@campus.edu', '+233240000004')");
-            db.run("INSERT INTO users (student_id, full_name, email, phone) VALUES ('5240101415', 'Sandra Otu', 'sandra@campus.edu', '+233240000005')");
         }
+    });
+
+    // Remove old placeholder user if exists
+    db.run("DELETE FROM users WHERE student_id = '10928374'");
+
+    // Seed all 5 Group 2 members
+    const group2Members = [
+        ['5240101411', 'Osei Sarfo Raphael', '5240101411@campus.edu', '+233240000001', 'STUDENT'],
+        ['5240101412', 'Adjei Douglas', '5240101412@campus.edu', '+233240000002', 'STUDENT'],
+        ['5240101413', 'Richard Amoako Korang', 'Ramoako300@gmail.com', '+233240000003', 'LEAD_DEV'],
+        ['5240101414', 'Ibrahim Mohammed', '5240101414@campus.edu', '+233240000004', 'STUDENT'],
+        ['5240101415', 'Sandra Otu', '5240101415@campus.edu', '+233240000005', 'STUDENT']
+    ];
+
+    group2Members.forEach(([id, name, email, phone, role]) => {
+        db.run(
+            `INSERT INTO users (student_id, full_name, email, phone, role) 
+             VALUES (?, ?, ?, ?, ?)
+             ON CONFLICT(student_id) DO UPDATE SET full_name = excluded.full_name, email = excluded.email`,
+            [id, name, email, phone, role]
+        );
     });
 });
 
