@@ -58,9 +58,106 @@ This project systematically incorporates each unit from the Software Engineering
 > View all 7 interactive drawings with PDF export at **`http://localhost:3000/diagrams.html`** or in [`docs/UML_DIAGRAMS.md`](docs/UML_DIAGRAMS.md).
 
 ### 1. UML Use Case Diagram (Unit 4)
+```mermaid
+flowchart TD
+    Student["👤 Student<br/>(Campus User)"]
+    Admin["👨‍💼 Hostel Admin<br/>(Hall Management)"]
+    Paystack["💳 Paystack Sandbox<br/>«External Service»"]
+    SMS["📱 SMS Gateway<br/>«External Service»"]
+
+    subgraph HostelEase["HostelEase System Boundary"]
+        UC1(["Browse & Filter Hostels"])
+        UC2(["Reserve Bed Space (15-min Lock)"])
+        UC3(["Pay via Mobile Money Sandbox"])
+        UC4(["Receive SMS Confirmation Ticket"])
+        UC5(["Add New Room (CRUD)"])
+        UC6(["Edit Room Details (CRUD)"])
+        UC7(["Delete Room from Inventory"])
+    end
+
+    Student --> UC1
+    Student --> UC2
+    Student --> UC3
+    Student --> UC4
+
+    Admin --> UC1
+    Admin --> UC5
+    Admin --> UC6
+    Admin --> UC7
+
+    UC2 -.->|«include»| UC3
+    UC3 -.->|«external»| Paystack
+    UC3 -.->|«include»| UC4
+    UC4 -.->|«external»| SMS
+```
+*Direct SVG Drawing:* [`docs/diagrams/use_case_diagram.svg`](docs/diagrams/use_case_diagram.svg)  
 ![HostelEase UML Use Case Diagram](docs/diagrams/use_case_diagram.svg)
 
+---
+
 ### 2. UML Domain Class Diagram (Unit 4 & 5)
+```mermaid
+classDiagram
+    class User {
+        -int id
+        -String studentId
+        -String fullName
+        -String email
+        -String phone
+        -String role
+        +register() Boolean
+        +login() String
+        +getProfile() User
+    }
+
+    class Hostel {
+        -int id
+        -String name
+        -String campusLocation
+        -String genderType
+        +getRooms() List
+        +getAvailableCount() int
+    }
+
+    class Room {
+        -int id
+        -int hostelId
+        -String roomNumber
+        -int capacity
+        -double pricePerSemester
+        -String status
+        +lockRoom(duration) Boolean
+        +releaseLock() void
+        +updateDetails(data) void
+    }
+
+    class Booking {
+        -int id
+        -int userId
+        -int roomId
+        -String reference
+        -String status
+        +reserveBedSpace() Result
+        +confirmPayment() Result
+        +isLockExpired() Boolean
+    }
+
+    class PaymentTransaction {
+        -int id
+        -int bookingId
+        -String reference
+        -double amount
+        -String channel
+        +verifySignature() Boolean
+        +recordPayment() void
+    }
+
+    User "1" --> "0..*" Booking : places
+    Hostel "1" *-- "1..*" Room : contains
+    Room "1" <-- "0..*" Booking : targets
+    Booking "1" -- "1" PaymentTransaction : generates
+```
+*Direct SVG Drawing:* [`docs/diagrams/class_diagram.svg`](docs/diagrams/class_diagram.svg)  
 ![HostelEase UML Class Diagram](docs/diagrams/class_diagram.svg)
 
 ---
