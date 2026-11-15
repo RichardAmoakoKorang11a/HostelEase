@@ -1,0 +1,155 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="100%" height="100%" style="background:#ffffff; font-family:system-ui, -apple-system, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <!-- Header -->
+  <text x="500" y="32" text-anchor="middle" font-size="22" font-weight="bold" fill="#1e3a8a">HostelEase - UML Class Diagram &amp; Domain Model (Unit 4 &amp; 5)</text>
+  <text x="500" y="52" text-anchor="middle" font-size="12" fill="#64748b">Object-Oriented Design • Model-View-Controller Architecture &amp; Strategy Pattern</text>
+
+  <!-- CLASS 1: USER -->
+  <g transform="translate(60, 90)" filter="url(#shadow)">
+    <rect x="0" y="0" width="220" height="230" rx="6" fill="#ffffff" stroke="#2563eb" stroke-width="2" />
+    <rect x="0" y="0" width="220" height="32" rx="6" fill="#2563eb" />
+    <text x="110" y="21" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">User</text>
+    
+    <!-- Attributes -->
+    <text x="12" y="52" font-size="11" fill="#1e293b">- id : Integer</text>
+    <text x="12" y="70" font-size="11" fill="#1e293b">- studentId : String</text>
+    <text x="12" y="88" font-size="11" fill="#1e293b">- fullName : String</text>
+    <text x="12" y="106" font-size="11" fill="#1e293b">- email : String</text>
+    <text x="12" y="124" font-size="11" fill="#1e293b">- phone : String</text>
+    <text x="12" y="142" font-size="11" fill="#1e293b">- role : String = "STUDENT"</text>
+    <line x1="0" y1="152" x2="220" y2="152" stroke="#e2e8f0" stroke-width="1.5" />
+    
+    <!-- Operations -->
+    <text x="12" y="174" font-size="11" fill="#1e293b">+ register() : Boolean</text>
+    <text x="12" y="192" font-size="11" fill="#1e293b">+ login() : String</text>
+    <text x="12" y="210" font-size="11" fill="#1e293b">+ getProfile() : User</text>
+  </g>
+
+  <!-- CLASS 2: HOSTEL -->
+  <g transform="translate(390, 90)" filter="url(#shadow)">
+    <rect x="0" y="0" width="220" height="180" rx="6" fill="#ffffff" stroke="#059669" stroke-width="2" />
+    <rect x="0" y="0" width="220" height="32" rx="6" fill="#059669" />
+    <text x="110" y="21" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">Hostel</text>
+    
+    <!-- Attributes -->
+    <text x="12" y="52" font-size="11" fill="#1e293b">- id : Integer</text>
+    <text x="12" y="70" font-size="11" fill="#1e293b">- name : String</text>
+    <text x="12" y="88" font-size="11" fill="#1e293b">- campusLocation : String</text>
+    <text x="12" y="106" font-size="11" fill="#1e293b">- genderType : String</text>
+    <line x1="0" y1="116" x2="220" y2="116" stroke="#e2e8f0" stroke-width="1.5" />
+    
+    <!-- Operations -->
+    <text x="12" y="138" font-size="11" fill="#1e293b">+ getRooms() : List&lt;Room&gt;</text>
+    <text x="12" y="156" font-size="11" fill="#1e293b">+ getAvailableCount() : Integer</text>
+  </g>
+
+  <!-- CLASS 3: ROOM -->
+  <g transform="translate(710, 90)" filter="url(#shadow)">
+    <rect x="0" y="0" width="230" height="230" rx="6" fill="#ffffff" stroke="#b45309" stroke-width="2" />
+    <rect x="0" y="0" width="230" height="32" rx="6" fill="#b45309" />
+    <text x="115" y="21" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">Room</text>
+    
+    <!-- Attributes -->
+    <text x="12" y="52" font-size="11" fill="#1e293b">- id : Integer</text>
+    <text x="12" y="70" font-size="11" fill="#1e293b">- hostelId : Integer</text>
+    <text x="12" y="88" font-size="11" fill="#1e293b">- roomNumber : String</text>
+    <text x="12" y="106" font-size="11" fill="#1e293b">- capacity : Integer</text>
+    <text x="12" y="124" font-size="11" fill="#1e293b">- pricePerSemester : Decimal</text>
+    <text x="12" y="142" font-size="11" fill="#1e293b">- status : String (Enum)</text>
+    <line x1="0" y1="152" x2="230" y2="152" stroke="#e2e8f0" stroke-width="1.5" />
+    
+    <!-- Operations -->
+    <text x="12" y="174" font-size="11" fill="#1e293b">+ lockRoom(duration) : Boolean</text>
+    <text x="12" y="192" font-size="11" fill="#1e293b">+ releaseLock() : Void</text>
+    <text x="12" y="210" font-size="11" fill="#1e293b">+ updateDetails(data) : Void</text>
+  </g>
+
+  <!-- CLASS 4: BOOKING (Core Controller Domain) -->
+  <g transform="translate(390, 370)" filter="url(#shadow)">
+    <rect x="0" y="0" width="230" height="230" rx="6" fill="#ffffff" stroke="#6366f1" stroke-width="2" />
+    <rect x="0" y="0" width="230" height="32" rx="6" fill="#6366f1" />
+    <text x="115" y="21" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">Booking</text>
+    
+    <!-- Attributes -->
+    <text x="12" y="52" font-size="11" fill="#1e293b">- id : Integer</text>
+    <text x="12" y="70" font-size="11" fill="#1e293b">- userId : Integer</text>
+    <text x="12" y="88" font-size="11" fill="#1e293b">- roomId : Integer</text>
+    <text x="12" y="106" font-size="11" fill="#1e293b">- reference : String</text>
+    <text x="12" y="124" font-size="11" fill="#1e293b">- status : String</text>
+    <text x="12" y="142" font-size="11" fill="#1e293b">- createdAt : Timestamp</text>
+    <line x1="0" y1="152" x2="230" y2="152" stroke="#e2e8f0" stroke-width="1.5" />
+    
+    <!-- Operations -->
+    <text x="12" y="174" font-size="11" fill="#1e293b">+ reserveBedSpace() : Result</text>
+    <text x="12" y="192" font-size="11" fill="#1e293b">+ confirmPayment() : Result</text>
+    <text x="12" y="210" font-size="11" fill="#1e293b">+ isLockExpired() : Boolean</text>
+  </g>
+
+  <!-- CLASS 5: PAYMENT TRANSACTION -->
+  <g transform="translate(60, 410)" filter="url(#shadow)">
+    <rect x="0" y="0" width="220" height="190" rx="6" fill="#ffffff" stroke="#0d9488" stroke-width="2" />
+    <rect x="0" y="0" width="220" height="32" rx="6" fill="#0d9488" />
+    <text x="110" y="21" text-anchor="middle" font-size="14" font-weight="bold" fill="#ffffff">PaymentTransaction</text>
+    
+    <!-- Attributes -->
+    <text x="12" y="52" font-size="11" fill="#1e293b">- id : Integer</text>
+    <text x="12" y="70" font-size="11" fill="#1e293b">- bookingId : Integer</text>
+    <text x="12" y="88" font-size="11" fill="#1e293b">- reference : String</text>
+    <text x="12" y="106" font-size="11" fill="#1e293b">- amount : Decimal</text>
+    <text x="12" y="124" font-size="11" fill="#1e293b">- channel : String</text>
+    <line x1="0" y1="134" x2="220" y2="134" stroke="#e2e8f0" stroke-width="1.5" />
+    
+    <!-- Operations -->
+    <text x="12" y="156" font-size="11" fill="#1e293b">+ verifySignature() : Boolean</text>
+    <text x="12" y="174" font-size="11" fill="#1e293b">+ recordPayment() : Void</text>
+  </g>
+
+  <!-- STRATEGY PATTERN BOX (Unit 5) -->
+  <g transform="translate(710, 410)" filter="url(#shadow)">
+    <rect x="0" y="0" width="230" height="170" rx="6" fill="#fdf4ff" stroke="#9333ea" stroke-width="2" stroke-dasharray="4,2" />
+    <rect x="0" y="0" width="230" height="32" rx="6" fill="#9333ea" />
+    <text x="115" y="15" text-anchor="middle" font-size="10" fill="#f5d0fe">«interface / Strategy»</text>
+    <text x="115" y="27" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">IPaymentGateway</text>
+    
+    <text x="12" y="55" font-size="11" fill="#581c87">+ initializePayment(data) : Url</text>
+    <text x="12" y="75" font-size="11" fill="#581c87">+ verifyPayment(ref) : Status</text>
+    <line x1="0" y1="88" x2="230" y2="88" stroke="#f0abfc" stroke-width="1.5" />
+    
+    <text x="12" y="110" font-size="11" font-weight="bold" fill="#701a75">Implementations:</text>
+    <text x="18" y="130" font-size="11" fill="#4a044e">• PaystackSandboxProvider</text>
+    <text x="18" y="150" font-size="11" fill="#4a044e">• MockFallbackProvider</text>
+  </g>
+
+  <!-- MULTIPLICITY & RELATIONSHIP LINES -->
+  <!-- User to Booking (1 to 0..*) -->
+  <line x1="170" y1="320" x2="390" y2="440" stroke="#334155" stroke-width="1.8" />
+  <text x="185" y="340" font-size="12" font-weight="bold" fill="#1e293b">1</text>
+  <text x="350" y="430" font-size="12" font-weight="bold" fill="#1e293b">0..*</text>
+  <text x="240" y="375" font-size="11" fill="#64748b">places &gt;</text>
+
+  <!-- Hostel to Room (Composition: 1 *-- 1..*) -->
+  <line x1="610" y1="180" x2="710" y2="180" stroke="#334155" stroke-width="2" />
+  <!-- Diamond (Composition) -->
+  <polygon points="610,180 618,175 626,180 618,185" fill="#334155" stroke="#334155" />
+  <text x="635" y="172" font-size="12" font-weight="bold" fill="#1e293b">1</text>
+  <text x="690" y="172" font-size="12" font-weight="bold" fill="#1e293b">1..*</text>
+
+  <!-- Booking to Room (Targets) -->
+  <line x1="620" y1="440" x2="780" y2="320" stroke="#334155" stroke-width="1.8" />
+  <polygon points="780,320 772,328 780,332" fill="#334155" />
+  <text x="640" y="425" font-size="12" font-weight="bold" fill="#1e293b">0..*</text>
+  <text x="790" y="345" font-size="12" font-weight="bold" fill="#1e293b">1</text>
+  <text x="715" y="390" font-size="11" fill="#64748b">&lt; targets</text>
+
+  <!-- Booking to Payment (1 to 1) -->
+  <line x1="390" y1="510" x2="280" y2="510" stroke="#334155" stroke-width="1.8" />
+  <text x="365" y="502" font-size="12" font-weight="bold" fill="#1e293b">1</text>
+  <text x="295" y="502" font-size="12" font-weight="bold" fill="#1e293b">1</text>
+  <text x="315" y="530" font-size="11" fill="#64748b">generates</text>
+</svg>
+

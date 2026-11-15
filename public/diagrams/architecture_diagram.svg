@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="100%" height="100%" style="background:#ffffff; font-family:system-ui, -apple-system, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <!-- Title -->
+  <text x="500" y="32" text-anchor="middle" font-size="22" font-weight="bold" fill="#1e3a8a">HostelEase - 3-Tier System Architecture Diagram (Unit 5 &amp; 10)</text>
+  <text x="500" y="52" text-anchor="middle" font-size="12" fill="#64748b">Decoupled Presentation, Application Logic, and Data/External Integration</text>
+
+  <!-- TIER 1: CLIENT PRESENTATION TIER -->
+  <g transform="translate(60, 80)" filter="url(#shadow)">
+    <rect x="0" y="0" width="880" height="130" rx="10" fill="#f8fafc" stroke="#3b82f6" stroke-width="2" />
+    <rect x="0" y="0" width="880" height="28" rx="8" fill="#3b82f6" />
+    <text x="20" y="19" font-size="12" font-weight="bold" fill="#ffffff">TIER 1: CLIENT PRESENTATION TIER (Responsive Web UI &amp; PWA)</text>
+
+    <!-- Component 1 -->
+    <rect x="30" y="42" width="250" height="65" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <text x="155" y="68" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Tailwind CSS Web Client</text>
+    <text x="155" y="88" text-anchor="middle" font-size="10" fill="#64748b">Dynamic Room Cards &amp; Countdown Timer</text>
+
+    <!-- Component 2 -->
+    <rect x="315" y="42" width="250" height="65" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <text x="440" y="68" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Admin Management Modal</text>
+    <text x="440" y="88" text-anchor="middle" font-size="10" fill="#64748b">Full CRUD (Add, Edit, Delete Rooms)</text>
+
+    <!-- Component 3 -->
+    <rect x="600" y="42" width="250" height="65" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <text x="725" y="68" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">Offline Allocation Pass</text>
+    <text x="725" y="88" text-anchor="middle" font-size="10" fill="#64748b">Digital Slip for Hall Porter Verification</text>
+  </g>
+
+  <!-- Connection Arrows (Tier 1 <-> Tier 2) -->
+  <line x1="500" y1="210" x2="500" y2="255" stroke="#2563eb" stroke-width="3" />
+  <polygon points="500,255 494,244 506,244" fill="#2563eb" />
+  <polygon points="500,210 494,221 506,221" fill="#2563eb" />
+  <text x="515" y="238" font-size="11" font-weight="bold" fill="#1d4ed8">HTTP/REST JSON API</text>
+
+  <!-- TIER 2: APPLICATION & LOGIC TIER -->
+  <g transform="translate(60, 255)" filter="url(#shadow)">
+    <rect x="0" y="0" width="880" height="165" rx="10" fill="#f8fafc" stroke="#0891b2" stroke-width="2" />
+    <rect x="0" y="0" width="880" height="28" rx="8" fill="#0891b2" />
+    <text x="20" y="19" font-size="12" font-weight="bold" fill="#ffffff">TIER 2: APPLICATION SERVER &amp; BUSINESS LOGIC (Node.js &amp; Express)</text>
+
+    <!-- Submodule 1 -->
+    <rect x="25" y="42" width="190" height="100" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <text x="120" y="67" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e293b">Express Router</text>
+    <text x="120" y="87" text-anchor="middle" font-size="10" fill="#64748b">/api/rooms (CRUD)</text>
+    <text x="120" y="103" text-anchor="middle" font-size="10" fill="#64748b">/api/bookings/reserve</text>
+    <text x="120" y="119" text-anchor="middle" font-size="10" fill="#64748b">/api/bookings/pay-sandbox</text>
+
+    <!-- Submodule 2 -->
+    <rect x="240" y="42" width="200" height="100" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8" />
+    <text x="340" y="67" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d4ed8">Concurrency Engine</text>
+    <text x="340" y="87" text-anchor="middle" font-size="10" fill="#1e40af">15-Minute Bed-Space Lock</text>
+    <text x="340" y="103" text-anchor="middle" font-size="10" fill="#1e40af">Atomic State Transition</text>
+    <text x="340" y="119" text-anchor="middle" font-size="10" fill="#1e40af">Automated Expiry Rollback</text>
+
+    <!-- Submodule 3 -->
+    <rect x="465" y="42" width="190" height="100" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <text x="560" y="67" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e293b">Payment Gateway Strategy</text>
+    <text x="560" y="87" text-anchor="middle" font-size="10" fill="#64748b">Paystack Sandbox Adapter</text>
+    <text x="560" y="103" text-anchor="middle" font-size="10" fill="#64748b">Mock Transaction Fallback</text>
+    <text x="560" y="119" text-anchor="middle" font-size="10" fill="#64748b">Signature Verification</text>
+
+    <!-- Submodule 4 -->
+    <rect x="680" y="42" width="180" height="100" rx="6" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.5" />
+    <text x="770" y="67" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e293b">Notification Dispatcher</text>
+    <text x="770" y="87" text-anchor="middle" font-size="10" fill="#64748b">Twilio / Hubtel SMS Gateway</text>
+    <text x="770" y="103" text-anchor="middle" font-size="10" fill="#64748b">Ticket Reference Formatting</text>
+    <text x="770" y="119" text-anchor="middle" font-size="10" fill="#64748b">Console Fallback Logger</text>
+  </g>
+
+  <!-- Connection Arrows (Tier 2 <-> Tier 3) -->
+  <line x1="500" y1="420" x2="500" y2="465" stroke="#0891b2" stroke-width="3" />
+  <polygon points="500,465 494,454 506,454" fill="#0891b2" />
+  <polygon points="500,420 494,431 506,431" fill="#0891b2" />
+  <text x="515" y="448" font-size="11" font-weight="bold" fill="#0e7490">SQL Queries &amp; HTTPS REST</text>
+
+  <!-- TIER 3: DATA & EXTERNAL SERVICES TIER -->
+  <g transform="translate(60, 465)" filter="url(#shadow)">
+    <rect x="0" y="0" width="880" height="150" rx="10" fill="#f8fafc" stroke="#475569" stroke-width="2" />
+    <rect x="0" y="0" width="880" height="28" rx="8" fill="#475569" />
+    <text x="20" y="19" font-size="12" font-weight="bold" fill="#ffffff">TIER 3: PERSISTENCE &amp; EXTERNAL SERVICES</text>
+
+    <!-- DB -->
+    <rect x="40" y="45" width="250" height="80" rx="6" fill="#ffffff" stroke="#475569" stroke-width="1.8" />
+    <text x="165" y="75" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">SQLite Database</text>
+    <text x="165" y="95" text-anchor="middle" font-size="10" fill="#64748b">Normalized Schema: users, hostels, rooms, bookings, payments</text>
+
+    <!-- External 1 -->
+    <rect x="330" y="45" width="250" height="80" rx="6" fill="#ecfdf5" stroke="#059669" stroke-width="1.8" />
+    <text x="455" y="70" text-anchor="middle" font-size="11" font-weight="bold" fill="#047857">«External Service 1»</text>
+    <text x="455" y="88" text-anchor="middle" font-size="13" font-weight="bold" fill="#065f46">Paystack Payment Sandbox</text>
+    <text x="455" y="105" text-anchor="middle" font-size="10" fill="#047857">Mobile Money (MTN/Vodafone/AirtelTigo)</text>
+
+    <!-- External 2 -->
+    <rect x="620" y="45" width="230" height="80" rx="6" fill="#eff6ff" stroke="#2563eb" stroke-width="1.8" />
+    <text x="735" y="70" text-anchor="middle" font-size="11" font-weight="bold" fill="#1d4ed8">«External Service 2»</text>
+    <text x="735" y="88" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e40af">Twilio / Hubtel SMS Sandbox</text>
+    <text x="735" y="105" text-anchor="middle" font-size="10" fill="#1d4ed8">Instant Offline GSM SMS Ticket</text>
+  </g>
+</svg>
+

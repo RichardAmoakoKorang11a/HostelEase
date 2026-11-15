@@ -39,7 +39,7 @@
             <div id="diagramDescription" class="mb-4 p-4 bg-blue-50 border-l-4 border-blue-600 rounded text-sm text-blue-900 font-medium"></div>
             
             <div class="overflow-auto border border-gray-200 rounded-lg p-4 bg-gray-50 flex justify-center">
-                <img id="diagramImage" src="/docs/diagrams/use_case_diagram.svg" alt="UML Diagram" class="max-w-full h-auto shadow-sm rounded">
+                <img id="diagramImage" src="diagrams/use_case_diagram.svg" alt="UML Diagram" class="max-w-full h-auto shadow-sm rounded">
             </div>
         </div>
     </main>
@@ -47,37 +47,37 @@
     <script>
         const diagramData = {
             usecase: {
-                src: '/docs/diagrams/use_case_diagram.svg',
+                src: 'diagrams/use_case_diagram.svg',
                 title: 'UML Use Case Diagram (Unit 4)',
                 desc: 'Illustrates the HostelEase system boundary, the Student actor (booking & offline slip receipt), the Hostel Admin actor (full CRUD room management), and external APIs (Paystack Mobile Money Sandbox and SMS Gateway).'
             },
             class: {
-                src: '/docs/diagrams/class_diagram.svg',
+                src: 'diagrams/class_diagram.svg',
                 title: 'UML Domain Class Diagram (Unit 4 & 5)',
                 desc: 'Defines the object-oriented structure including User, Hostel, Room, Booking, and PaymentTransaction entities with full attributes, visibility, operations, and the IPaymentGateway Strategy pattern interface.'
             },
             sequence: {
-                src: '/docs/diagrams/sequence_diagram.svg',
+                src: 'diagrams/sequence_diagram.svg',
                 title: 'UML Sequence Diagram (Unit 4)',
                 desc: 'Chronological message flow detailing how a student initiates a reservation, the Express server acquires an atomic 15-minute lock in SQLite, authorizes via Paystack Sandbox, and asynchronously emits an offline SMS ticket.'
             },
             activity: {
-                src: '/docs/diagrams/activity_diagram.svg',
+                src: 'diagrams/activity_diagram.svg',
                 title: 'UML Activity & State Machine Diagram (Unit 4)',
                 desc: 'Workflow logic modeling the state transitions of a room (AVAILABLE -> LOCKED -> OCCUPIED), including the automatic rollback trigger if payment is not completed within the 15-minute window.'
             },
             er: {
-                src: '/docs/diagrams/er_diagram.svg',
+                src: 'diagrams/er_diagram.svg',
                 title: 'Relational Database ER Diagram (Unit 6)',
                 desc: 'Database schema showing USERS, HOSTELS, ROOMS, BOOKINGS, and PAYMENTS tables with Primary Keys (PK), Foreign Keys (FK), Unique Keys (UK), and 1:N cardinality relationships.'
             },
             arch: {
-                src: '/docs/diagrams/architecture_diagram.svg',
+                src: 'diagrams/architecture_diagram.svg',
                 title: '3-Tier System Architecture (Unit 5 & 10)',
                 desc: 'Architectural overview showing separation of concerns: Client Presentation Tier (Tailwind UI & PWA), Application Tier (Express REST APIs & Concurrency Locking Engine), and Persistence & External Integration Tier.'
             },
             roadmap: {
-                src: '/docs/diagrams/sprint_roadmap.svg',
+                src: 'diagrams/sprint_roadmap.svg',
                 title: 'Sprint Roadmap & 3-Week Role Rotation (Unit 9)',
                 desc: 'Gantt schedule across the 8-week project lifecycle, tracking Sprints 1, 2, and 3, key unit deliverables, and the rotating role assignments for all 5 Group 2 team members.'
             }
