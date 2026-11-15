@@ -12,3 +12,4 @@ if %errorlevel% neq 0 (
 :: Launch the application in default web browser
 start "" "http://localhost:3000"
 exit
+

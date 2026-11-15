@@ -3,93 +3,278 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HostelEase - Campus Hostel Booking</title>
+    <title>HostelEase - Campus Hostel Booking & Management</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans">
     <header class="bg-blue-700 text-white shadow-md">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-3">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight">🏢 HostelEase</h1>
                 <p class="text-xs text-blue-200">Software Engineering Group 2 Project</p>
             </div>
-            <div class="text-right">
-                <span class="text-xs bg-blue-800 px-3 py-1 rounded-full text-blue-200">Active User: Richard Amoako Korang (5240101413)</span>
-                <p class="text-[11px] text-blue-300 mt-1">Group 2: Raphael, Douglas, Richard, Ibrahim, Sandra</p>
+            <div class="flex items-center gap-3">
+                <button onclick="openAddModal()" class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1">
+                    <span>➕</span> Add New Room
+                </button>
+                <div class="text-right hidden sm:block">
+                    <span class="text-xs bg-blue-800 px-3 py-1 rounded-full text-blue-200">User: Richard Amoako Korang (5240101413)</span>
+                </div>
             </div>
         </div>
     </header>
 
     <main class="max-w-6xl mx-auto px-4 py-8">
-        <div class="mb-6 flex justify-between items-center">
+        <div class="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div>
-                <h2 class="text-xl font-semibold">Available Campus Hostel Rooms</h2>
-                <p class="text-sm text-gray-500">Select a bed space to place a 15-minute lock and proceed to Paystack Sandbox payment.</p>
+                <h2 class="text-xl font-bold text-gray-800">Campus Rooms & Inventory Management</h2>
+                <p class="text-sm text-gray-500">Students can lock & book rooms. Admins can add, edit, or delete room inventory.</p>
             </div>
-            <button onclick="loadRooms()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-4 py-2 rounded-lg">🔄 Refresh List</button>
+            <div class="flex gap-2">
+                <button onclick="loadRooms()" class="bg-gray-200 hover:bg-gray-300 text-gray-700 text-sm px-4 py-2 rounded-lg font-medium transition">
+                    🔄 Refresh List
+                </button>
+            </div>
         </div>
 
+        <!-- Room Cards Grid -->
         <div id="roomContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
-        <!-- Checkout / Reservation Modal -->
-        <div id="modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <!-- Reservation Modal (Student Booking) -->
+        <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
             <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
                 <h3 class="text-lg font-bold text-gray-800 mb-2">Room Locked for 15 Minutes!</h3>
-                <p class="text-sm text-gray-600 mb-4">Complete your sandbox payment before the timer expires.</p>
+                <p class="text-sm text-gray-600 mb-4">Complete your sandbox payment before the concurrency timer expires.</p>
                 <div class="bg-blue-50 border border-blue-200 p-4 rounded-lg mb-4 text-center">
                     <p class="text-xs text-gray-500 uppercase tracking-wide">Booking Reference</p>
                     <p id="modalRef" class="text-xl font-mono font-bold text-blue-700"></p>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="simulatePayment()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-lg">Pay with MoMo Sandbox</button>
-                    <button onclick="closeModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100">Cancel</button>
+                    <button onclick="simulatePayment()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-lg transition">Pay with MoMo Sandbox</button>
+                    <button onclick="closeBookingModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 transition">Cancel</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Add / Edit Room Modal (Admin CRUD) -->
+        <div id="roomFormModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-xl shadow-xl p-6 max-w-lg w-full mx-4">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 id="formModalTitle" class="text-lg font-bold text-gray-800">Add New Room</h3>
+                    <button onclick="closeRoomFormModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+                </div>
+                <form id="roomForm" onsubmit="saveRoom(event)">
+                    <input type="hidden" id="roomId" value="">
+                    
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Hostel Block</label>
+                        <select id="formHostel" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Room Number</label>
+                            <input type="text" id="formRoomNumber" required placeholder="e.g. Room 401" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Capacity</label>
+                            <input type="number" id="formCapacity" min="1" max="4" value="1" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Price / Semester (GHS)</label>
+                            <input type="number" step="0.01" id="formPrice" required placeholder="e.g. 1500" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Status</label>
+                            <select id="formStatus" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="AVAILABLE">AVAILABLE</option>
+                                <option value="LOCKED">LOCKED</option>
+                                <option value="OCCUPIED">OCCUPIED</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end gap-3">
+                        <button type="button" onclick="closeRoomFormModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 text-sm font-medium transition">Cancel</button>
+                        <button type="submit" id="saveButton" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg text-sm transition">Save Room</button>
+                    </div>
+                </form>
             </div>
         </div>
     </main>
 
     <script>
         let currentReference = null;
+        let allHostels = [];
+        let allRooms = [];
+
+        async function loadHostels() {
+            try {
+                const res = await fetch('/api/hostels');
+                allHostels = await res.json();
+                const select = document.getElementById('formHostel');
+                select.innerHTML = allHostels.map(h => `
+                    <option value="${h.id}">${h.name} (${h.campus_location} - ${h.gender_type})</option>
+                `).join('');
+            } catch (err) {
+                console.error("Failed to load hostels:", err);
+            }
+        }
 
         async function loadRooms() {
             const container = document.getElementById('roomContainer');
-            container.innerHTML = '<p class="text-gray-500">Loading rooms...</p>';
+            container.innerHTML = '<p class="text-gray-500 col-span-3 text-center py-8">Loading rooms...</p>';
             try {
                 const res = await fetch('/api/rooms');
-                const rooms = await res.json();
-                container.innerHTML = rooms.map(r => `
-                    <div class="bg-white border rounded-xl shadow-sm p-5 flex flex-col justify-between">
+                allRooms = await res.json();
+
+                if (allRooms.length === 0) {
+                    container.innerHTML = `
+                        <div class="col-span-3 text-center py-12 bg-white rounded-xl border border-dashed border-gray-300 p-8">
+                            <p class="text-gray-500 mb-3">No rooms in inventory yet.</p>
+                            <button onclick="openAddModal()" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium">Add First Room</button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = allRooms.map(r => `
+                    <div class="bg-white border rounded-xl shadow-sm hover:shadow-md transition p-5 flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-2">
-                                <h3 class="font-bold text-lg">${r.hostel_name} - ${r.room_number}</h3>
-                                <span class="px-2 py-1 text-xs rounded font-semibold ${r.status === 'AVAILABLE' ? 'bg-green-100 text-green-800' : (r.status === 'LOCKED' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800')}">${r.status}</span>
+                                <h3 class="font-bold text-lg text-gray-800">${r.hostel_name} - ${r.room_number}</h3>
+                                <span class="px-2 py-1 text-xs rounded-full font-semibold ${
+                                    r.status === 'AVAILABLE' ? 'bg-green-100 text-green-800' : 
+                                    (r.status === 'LOCKED' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800')
+                                }">${r.status}</span>
                             </div>
-                            <p class="text-sm text-gray-500">${r.campus_location} (${r.gender_type})</p>
-                            <p class="text-xl font-bold text-gray-800 mt-3">GHS ${r.price_per_semester} <span class="text-xs font-normal text-gray-500">/ semester</span></p>
+                            <p class="text-xs text-gray-500">${r.campus_location} • Gender: <span class="font-medium text-gray-700">${r.gender_type}</span> • Capacity: ${r.capacity} bed</p>
+                            <p class="text-xl font-bold text-blue-700 mt-3">GHS ${Number(r.price_per_semester).toFixed(2)} <span class="text-xs font-normal text-gray-500">/ semester</span></p>
                         </div>
-                        <button onclick="reserveRoom(${r.id})" ${r.status !== 'AVAILABLE' ? 'disabled' : ''} class="mt-4 w-full py-2 px-4 rounded-lg font-medium text-sm ${r.status === 'AVAILABLE' ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-200 text-gray-400 cursor-not-allowed'}">
-                            ${r.status === 'AVAILABLE' ? 'Lock & Reserve Bed' : 'Unavailable'}
-                        </button>
+
+                        <div class="mt-5 pt-3 border-t border-gray-100">
+                            <!-- Student Booking Action -->
+                            <button onclick="reserveRoom(${r.id})" ${r.status !== 'AVAILABLE' ? 'disabled' : ''} class="w-full py-2 px-4 rounded-lg font-medium text-sm transition ${
+                                r.status === 'AVAILABLE' ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                            }">
+                                ${r.status === 'AVAILABLE' ? '🔒 Lock & Reserve Bed' : (r.status === 'LOCKED' ? '⏳ Reserved (Pending Payment)' : '🚫 Occupied')}
+                            </button>
+
+                            <!-- Admin Actions (Edit & Delete) -->
+                            <div class="flex gap-2 mt-2">
+                                <button onclick="openEditModal(${r.id})" class="flex-1 text-xs bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-1.5 rounded-md transition flex items-center justify-center gap-1">
+                                    <span>✏️</span> Edit
+                                </button>
+                                <button onclick="deleteRoom(${r.id}, '${r.room_number}')" class="flex-1 text-xs bg-red-50 hover:bg-red-100 text-red-600 font-semibold py-1.5 rounded-md transition flex items-center justify-center gap-1">
+                                    <span>🗑️</span> Delete
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 `).join('');
             } catch (err) {
-                container.innerHTML = '<p class="text-red-500">Failed to load rooms.</p>';
+                container.innerHTML = '<p class="text-red-500 col-span-3 text-center">Failed to load rooms from server.</p>';
             }
         }
+
+        // ==================== CRUD OPERATIONS ====================
+
+        function openAddModal() {
+            document.getElementById('formModalTitle').innerText = '➕ Add New Room';
+            document.getElementById('roomId').value = '';
+            document.getElementById('formRoomNumber').value = '';
+            document.getElementById('formPrice').value = '';
+            document.getElementById('formCapacity').value = '1';
+            document.getElementById('formStatus').value = 'AVAILABLE';
+            document.getElementById('roomFormModal').classList.remove('hidden');
+        }
+
+        function openEditModal(id) {
+            const room = allRooms.find(r => r.id === id);
+            if (!room) return;
+
+            document.getElementById('formModalTitle').innerText = `✏️ Edit Room: ${room.room_number}`;
+            document.getElementById('roomId').value = room.id;
+            document.getElementById('formHostel').value = room.hostel_id;
+            document.getElementById('formRoomNumber').value = room.room_number;
+            document.getElementById('formPrice').value = room.price_per_semester;
+            document.getElementById('formCapacity').value = room.capacity;
+            document.getElementById('formStatus').value = room.status;
+            document.getElementById('roomFormModal').classList.remove('hidden');
+        }
+
+        async function saveRoom(event) {
+            event.preventDefault();
+            const id = document.getElementById('roomId').value;
+            const payload = {
+                hostel_id: parseInt(document.getElementById('formHostel').value),
+                room_number: document.getElementById('formRoomNumber').value.trim(),
+                price_per_semester: parseFloat(document.getElementById('formPrice').value),
+                capacity: parseInt(document.getElementById('formCapacity').value),
+                status: document.getElementById('formStatus').value
+            };
+
+            try {
+                const url = id ? `/api/rooms/${id}` : '/api/rooms';
+                const method = id ? 'PUT' : 'POST';
+
+                const res = await fetch(url, {
+                    method,
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!res.ok) {
+                    const err = await res.json();
+                    return alert("Error: " + (err.error || "Failed to save room"));
+                }
+
+                closeRoomFormModal();
+                loadRooms();
+            } catch (err) {
+                alert("Failed to save room: " + err.message);
+            }
+        }
+
+        async function deleteRoom(id, roomNumber) {
+            if (!confirm(`Are you sure you want to delete ${roomNumber}? This cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const res = await fetch(`/api/rooms/${id}`, { method: 'DELETE' });
+                if (!res.ok) {
+                    const err = await res.json();
+                    return alert("Error: " + (err.error || "Failed to delete room"));
+                }
+                loadRooms();
+            } catch (err) {
+                alert("Failed to delete room: " + err.message);
+            }
+        }
+
+        function closeRoomFormModal() {
+            document.getElementById('roomFormModal').classList.add('hidden');
+        }
+
+        // ==================== BOOKING WORKFLOW ====================
 
         async function reserveRoom(roomId) {
             try {
                 const res = await fetch('/api/bookings/reserve', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: 3, roomId }) // Defaults to Richard (User 3)
+                    body: JSON.stringify({ userId: 3, roomId })
                 });
                 const data = await res.json();
                 if (!res.ok) return alert(data.error);
 
                 currentReference = data.reference;
                 document.getElementById('modalRef').innerText = data.reference;
-                document.getElementById('modal').classList.remove('hidden');
+                document.getElementById('bookingModal').classList.remove('hidden');
                 loadRooms();
             } catch (err) {
                 alert("Reservation error: " + err.message);
@@ -104,18 +289,20 @@
                     body: JSON.stringify({ reference: currentReference })
                 });
                 const data = await res.json();
-                alert("Payment Success! SMS dispatched to student phone.");
-                closeModal();
+                alert("Payment Success! SMS ticket dispatched to student phone.");
+                closeBookingModal();
                 loadRooms();
             } catch (err) {
                 alert("Payment error: " + err.message);
             }
         }
 
-        function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.add('hidden');
         }
 
+        // Initialize on page load
+        loadHostels();
         loadRooms();
     </script>
 </body>
