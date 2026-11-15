@@ -90,8 +90,7 @@ flowchart TD
     UC3 -.->|«include»| UC4
     UC4 -.->|«external»| SMS
 ```
-*Direct SVG Drawing:* [`docs/diagrams/use_case_diagram.svg`](docs/diagrams/use_case_diagram.svg)  
-![HostelEase UML Use Case Diagram](docs/diagrams/use_case_diagram.svg)
+*Vector Drawing File:* [`docs/diagrams/use_case_diagram.svg`](docs/diagrams/use_case_diagram.svg)
 
 ---
 
@@ -157,8 +156,7 @@ classDiagram
     Room "1" <-- "0..*" Booking : targets
     Booking "1" -- "1" PaymentTransaction : generates
 ```
-*Direct SVG Drawing:* [`docs/diagrams/class_diagram.svg`](docs/diagrams/class_diagram.svg)  
-![HostelEase UML Class Diagram](docs/diagrams/class_diagram.svg)
+*Vector Drawing File:* [`docs/diagrams/class_diagram.svg`](docs/diagrams/class_diagram.svg)
 
 ---
 
