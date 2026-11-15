@@ -54,6 +54,17 @@ This project systematically incorporates each unit from the Software Engineering
 
 ---
 
+## 📐 Visual UML Diagrams & Drawings (Unit 4 & 5)
+> View all 7 interactive drawings with PDF export at **`http://localhost:3000/diagrams.html`** or in [`docs/UML_DIAGRAMS.md`](docs/UML_DIAGRAMS.md).
+
+### 1. UML Use Case Diagram (Unit 4)
+![HostelEase UML Use Case Diagram](docs/diagrams/use_case_diagram.svg)
+
+### 2. UML Domain Class Diagram (Unit 4 & 5)
+![HostelEase UML Class Diagram](docs/diagrams/class_diagram.svg)
+
+---
+
 ## 📁 Repository Structure
 ```text
 HostelEase/
