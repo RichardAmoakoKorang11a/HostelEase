@@ -1,0 +1,11 @@
+# Auto-detect text files and normalize line endings
+* text=auto eol=lf
+
+*.js text eol=lf
+*.json text eol=lf
+*.sql text eol=lf
+*.html text eol=lf
+*.md text eol=lf
+*.svg text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
