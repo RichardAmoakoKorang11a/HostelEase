@@ -14,6 +14,7 @@ const bookingService = new BookingService(db, paymentGateway, smsService);
 app.use(cors());
 app.use(express.json());
 app.use(express.static(path.join(__dirname, '../public')));
+app.use('/docs', express.static(path.join(__dirname, '../docs')));
 
 // List all hostels
 app.get('/api/hostels', async (req, res) => {

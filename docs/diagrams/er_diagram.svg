@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="100%" height="100%" style="background:#ffffff; font-family:system-ui, -apple-system, sans-serif;">
+  <defs>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="115%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="3" flood-opacity="0.12" />
+    </filter>
+  </defs>
+
+  <!-- Title -->
+  <text x="500" y="32" text-anchor="middle" font-size="22" font-weight="bold" fill="#1e3a8a">HostelEase - Relational Database Entity-Relationship (ER) Diagram</text>
+  <text x="500" y="52" text-anchor="middle" font-size="12" fill="#64748b">SQLite Relational Schema • Foreign Key Integrity &amp; Concurrency Lock Storage</text>
+
+  <!-- TABLE 1: USERS -->
+  <g transform="translate(50, 90)" filter="url(#shadow)">
+    <rect x="0" y="0" width="220" height="230" rx="6" fill="#ffffff" stroke="#2563eb" stroke-width="2" />
+    <rect x="0" y="0" width="220" height="30" rx="6" fill="#2563eb" />
+    <text x="110" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">USERS</text>
+    
+    <text x="12" y="50" font-size="11" font-weight="bold" fill="#dc2626">PK</text>
+    <text x="40" y="50" font-size="11" fill="#1e293b">id : INTEGER</text>
+    
+    <text x="12" y="72" font-size="11" font-weight="bold" fill="#059669">UK</text>
+    <text x="40" y="72" font-size="11" fill="#1e293b">student_id : VARCHAR(20)</text>
+    
+    <text x="40" y="94" font-size="11" fill="#1e293b">full_name : VARCHAR(100)</text>
+    
+    <text x="12" y="116" font-size="11" font-weight="bold" fill="#059669">UK</text>
+    <text x="40" y="116" font-size="11" fill="#1e293b">email : VARCHAR(100)</text>
+    
+    <text x="40" y="138" font-size="11" fill="#1e293b">phone : VARCHAR(20)</text>
+    <text x="40" y="160" font-size="11" fill="#1e293b">role : VARCHAR(20)</text>
+    <text x="40" y="182" font-size="11" fill="#1e293b">created_at : TIMESTAMP</text>
+  </g>
+
+  <!-- TABLE 2: HOSTELS -->
+  <g transform="translate(390, 90)" filter="url(#shadow)">
+    <rect x="0" y="0" width="220" height="170" rx="6" fill="#ffffff" stroke="#059669" stroke-width="2" />
+    <rect x="0" y="0" width="220" height="30" rx="6" fill="#059669" />
+    <text x="110" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">HOSTELS</text>
+    
+    <text x="12" y="50" font-size="11" font-weight="bold" fill="#dc2626">PK</text>
+    <text x="40" y="50" font-size="11" fill="#1e293b">id : INTEGER</text>
+    
+    <text x="40" y="75" font-size="11" fill="#1e293b">name : VARCHAR(100)</text>
+    <text x="40" y="100" font-size="11" fill="#1e293b">campus_location : VARCHAR</text>
+    <text x="40" y="125" font-size="11" fill="#1e293b">gender_type : VARCHAR(10)</text>
+  </g>
+
+  <!-- TABLE 3: ROOMS -->
+  <g transform="translate(720, 90)" filter="url(#shadow)">
+    <rect x="0" y="0" width="230" height="230" rx="6" fill="#ffffff" stroke="#b45309" stroke-width="2" />
+    <rect x="0" y="0" width="230" height="30" rx="6" fill="#b45309" />
+    <text x="115" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">ROOMS</text>
+    
+    <text x="12" y="50" font-size="11" font-weight="bold" fill="#dc2626">PK</text>
+    <text x="40" y="50" font-size="11" fill="#1e293b">id : INTEGER</text>
+    
+    <text x="12" y="72" font-size="11" font-weight="bold" fill="#2563eb">FK</text>
+    <text x="40" y="72" font-size="11" fill="#1e293b">hostel_id : INTEGER</text>
+    
+    <text x="40" y="94" font-size="11" fill="#1e293b">room_number : VARCHAR(20)</text>
+    <text x="40" y="116" font-size="11" fill="#1e293b">capacity : INTEGER</text>
+    <text x="40" y="138" font-size="11" fill="#1e293b">price_per_semester : DECIMAL</text>
+    <text x="40" y="160" font-size="11" fill="#1e293b">status : VARCHAR(20)</text>
+    <text x="40" y="182" font-size="11" fill="#1e293b">lock_expires_at : TIMESTAMP</text>
+  </g>
+
+  <!-- TABLE 4: BOOKINGS -->
+  <g transform="translate(390, 380)" filter="url(#shadow)">
+    <rect x="0" y="0" width="220" height="220" rx="6" fill="#ffffff" stroke="#6366f1" stroke-width="2" />
+    <rect x="0" y="0" width="220" height="30" rx="6" fill="#6366f1" />
+    <text x="110" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">BOOKINGS</text>
+    
+    <text x="12" y="50" font-size="11" font-weight="bold" fill="#dc2626">PK</text>
+    <text x="40" y="50" font-size="11" fill="#1e293b">id : INTEGER</text>
+    
+    <text x="12" y="72" font-size="11" font-weight="bold" fill="#2563eb">FK</text>
+    <text x="40" y="72" font-size="11" fill="#1e293b">user_id : INTEGER</text>
+    
+    <text x="12" y="94" font-size="11" font-weight="bold" fill="#2563eb">FK</text>
+    <text x="40" y="94" font-size="11" fill="#1e293b">room_id : INTEGER</text>
+    
+    <text x="12" y="116" font-size="11" font-weight="bold" fill="#059669">UK</text>
+    <text x="40" y="116" font-size="11" fill="#1e293b">reference : VARCHAR(50)</text>
+    
+    <text x="40" y="138" font-size="11" fill="#1e293b">status : VARCHAR(20)</text>
+    <text x="40" y="160" font-size="11" fill="#1e293b">created_at : TIMESTAMP</text>
+  </g>
+
+  <!-- TABLE 5: PAYMENTS -->
+  <g transform="translate(50, 410)" filter="url(#shadow)">
+    <rect x="0" y="0" width="220" height="190" rx="6" fill="#ffffff" stroke="#0d9488" stroke-width="2" />
+    <rect x="0" y="0" width="220" height="30" rx="6" fill="#0d9488" />
+    <text x="110" y="20" text-anchor="middle" font-size="13" font-weight="bold" fill="#ffffff">PAYMENTS</text>
+    
+    <text x="12" y="50" font-size="11" font-weight="bold" fill="#dc2626">PK</text>
+    <text x="40" y="50" font-size="11" fill="#1e293b">id : INTEGER</text>
+    
+    <text x="12" y="72" font-size="11" font-weight="bold" fill="#2563eb">FK</text>
+    <text x="40" y="72" font-size="11" fill="#1e293b">booking_id : INTEGER</text>
+    
+    <text x="12" y="94" font-size="11" font-weight="bold" fill="#059669">UK</text>
+    <text x="40" y="94" font-size="11" fill="#1e293b">reference : VARCHAR(50)</text>
+    
+    <text x="40" y="116" font-size="11" fill="#1e293b">amount : DECIMAL(10,2)</text>
+    <text x="40" y="138" font-size="11" fill="#1e293b">channel : VARCHAR(30)</text>
+    <text x="40" y="160" font-size="11" fill="#1e293b">paid_at : TIMESTAMP</text>
+  </g>
+
+  <!-- RELATIONSHIP LINES -->
+  <!-- Hostels to Rooms (1:N) -->
+  <line x1="610" y1="170" x2="720" y2="170" stroke="#475569" stroke-width="2" />
+  <circle cx="615" cy="170" r="4" fill="#475569" />
+  <!-- Crow foot at rooms -->
+  <line x1="720" y1="170" x2="705" y2="160" stroke="#475569" stroke-width="2" />
+  <line x1="720" y1="170" x2="705" y2="180" stroke="#475569" stroke-width="2" />
+
+  <!-- Users to Bookings (1:N) -->
+  <line x1="160" y1="320" x2="160" y2="350" stroke="#475569" stroke-width="2" />
+  <line x1="160" y1="350" x2="390" y2="440" stroke="#475569" stroke-width="2" />
+  <circle cx="160" cy="325" r="4" fill="#475569" />
+  <!-- Crow foot -->
+  <line x1="390" y1="440" x2="375" y2="430" stroke="#475569" stroke-width="2" />
+  <line x1="390" y1="440" x2="375" y2="450" stroke="#475569" stroke-width="2" />
+
+  <!-- Rooms to Bookings (1:N) -->
+  <line x1="835" y1="320" x2="835" y2="460" stroke="#475569" stroke-width="2" />
+  <line x1="835" y1="460" x2="610" y2="460" stroke="#475569" stroke-width="2" />
+  <circle cx="835" cy="325" r="4" fill="#475569" />
+  <!-- Crow foot -->
+  <line x1="610" y1="460" x2="625" y2="450" stroke="#475569" stroke-width="2" />
+  <line x1="610" y1="460" x2="625" y2="470" stroke="#475569" stroke-width="2" />
+
+  <!-- Bookings to Payments (1:1) -->
+  <line x1="390" y1="510" x2="270" y2="510" stroke="#475569" stroke-width="2" />
+  <line x1="380" y1="500" x2="380" y2="520" stroke="#475569" stroke-width="2" />
+  <line x1="280" y1="500" x2="280" y2="520" stroke="#475569" stroke-width="2" />
+</svg>

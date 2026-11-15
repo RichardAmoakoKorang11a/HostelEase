@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HostelEase - Architecture & UML Diagrams Viewer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 text-gray-900 font-sans">
+    <header class="bg-blue-800 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-3">
+            <div>
+                <div class="flex items-center gap-2">
+                    <a href="/" class="bg-blue-900 hover:bg-blue-950 px-3 py-1 rounded-md text-xs font-semibold">← Back to App</a>
+                    <h1 class="text-xl font-bold tracking-tight">📐 HostelEase Architecture &amp; UML Drawings</h1>
+                </div>
+                <p class="text-xs text-blue-200 mt-1">Software Engineering Group 2 • Unit 4 (UML), Unit 5 (Design Patterns), Unit 9 (Project Management)</p>
+            </div>
+            <button onclick="window.print()" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm flex items-center gap-1.5 transition">
+                <span>🖨️</span> Print / Export Diagrams PDF
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Navigation Tabs -->
+        <div class="flex flex-wrap gap-2 mb-6 border-b border-gray-300 pb-3">
+            <button onclick="showDiagram('usecase')" id="tab-usecase" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white shadow-sm">1. Use Case Diagram</button>
+            <button onclick="showDiagram('class')" id="tab-class" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-gray-700 hover:bg-gray-200">2. Class Diagram</button>
+            <button onclick="showDiagram('sequence')" id="tab-sequence" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-gray-700 hover:bg-gray-200">3. Sequence Diagram</button>
+            <button onclick="showDiagram('activity')" id="tab-activity" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-gray-700 hover:bg-gray-200">4. Activity / State Diagram</button>
+            <button onclick="showDiagram('er')" id="tab-er" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-gray-700 hover:bg-gray-200">5. Database ER Diagram</button>
+            <button onclick="showDiagram('arch')" id="tab-arch" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-gray-700 hover:bg-gray-200">6. 3-Tier Architecture</button>
+            <button onclick="showDiagram('roadmap')" id="tab-roadmap" class="tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-gray-700 hover:bg-gray-200">7. Sprint Gantt Roadmap</button>
+        </div>
+
+        <!-- Diagram Display Container -->
+        <div class="bg-white rounded-xl shadow-md border border-gray-200 p-6">
+            <div id="diagramDescription" class="mb-4 p-4 bg-blue-50 border-l-4 border-blue-600 rounded text-sm text-blue-900 font-medium"></div>
+            
+            <div class="overflow-auto border border-gray-200 rounded-lg p-4 bg-gray-50 flex justify-center">
+                <img id="diagramImage" src="/docs/diagrams/use_case_diagram.svg" alt="UML Diagram" class="max-w-full h-auto shadow-sm rounded">
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const diagramData = {
+            usecase: {
+                src: '/docs/diagrams/use_case_diagram.svg',
+                title: 'UML Use Case Diagram (Unit 4)',
+                desc: 'Illustrates the HostelEase system boundary, the Student actor (booking & offline slip receipt), the Hostel Admin actor (full CRUD room management), and external APIs (Paystack Mobile Money Sandbox and SMS Gateway).'
+            },
+            class: {
+                src: '/docs/diagrams/class_diagram.svg',
+                title: 'UML Domain Class Diagram (Unit 4 & 5)',
+                desc: 'Defines the object-oriented structure including User, Hostel, Room, Booking, and PaymentTransaction entities with full attributes, visibility, operations, and the IPaymentGateway Strategy pattern interface.'
+            },
+            sequence: {
+                src: '/docs/diagrams/sequence_diagram.svg',
+                title: 'UML Sequence Diagram (Unit 4)',
+                desc: 'Chronological message flow detailing how a student initiates a reservation, the Express server acquires an atomic 15-minute lock in SQLite, authorizes via Paystack Sandbox, and asynchronously emits an offline SMS ticket.'
+            },
+            activity: {
+                src: '/docs/diagrams/activity_diagram.svg',
+                title: 'UML Activity & State Machine Diagram (Unit 4)',
+                desc: 'Workflow logic modeling the state transitions of a room (AVAILABLE -> LOCKED -> OCCUPIED), including the automatic rollback trigger if payment is not completed within the 15-minute window.'
+            },
+            er: {
+                src: '/docs/diagrams/er_diagram.svg',
+                title: 'Relational Database ER Diagram (Unit 6)',
+                desc: 'Database schema showing USERS, HOSTELS, ROOMS, BOOKINGS, and PAYMENTS tables with Primary Keys (PK), Foreign Keys (FK), Unique Keys (UK), and 1:N cardinality relationships.'
+            },
+            arch: {
+                src: '/docs/diagrams/architecture_diagram.svg',
+                title: '3-Tier System Architecture (Unit 5 & 10)',
+                desc: 'Architectural overview showing separation of concerns: Client Presentation Tier (Tailwind UI & PWA), Application Tier (Express REST APIs & Concurrency Locking Engine), and Persistence & External Integration Tier.'
+            },
+            roadmap: {
+                src: '/docs/diagrams/sprint_roadmap.svg',
+                title: 'Sprint Roadmap & 3-Week Role Rotation (Unit 9)',
+                desc: 'Gantt schedule across the 8-week project lifecycle, tracking Sprints 1, 2, and 3, key unit deliverables, and the rotating role assignments for all 5 Group 2 team members.'
+            }
+        };
+
+        function showDiagram(key) {
+            const data = diagramData[key];
+            if (!data) return;
+
+            // Update image & description
+            document.getElementById('diagramImage').src = data.src;
+            document.getElementById('diagramDescription').innerHTML = `<strong>${data.title}:</strong> ${data.desc}`;
+
+            // Update active tab button style
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-white text-gray-700 hover:bg-gray-200 transition';
+            });
+            const activeBtn = document.getElementById(`tab-${key}`);
+            if (activeBtn) {
+                activeBtn.className = 'tab-btn px-4 py-2 rounded-lg text-sm font-semibold bg-blue-600 text-white shadow-sm transition';
+            }
+        }
+
+        // Initialize with use case diagram
+        showDiagram('usecase');
+    </script>
+</body>
+</html>
