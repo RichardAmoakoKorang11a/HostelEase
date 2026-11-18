@@ -63,3 +63,28 @@ To meet the course requirement of rotating roles every 3 weeks among all team me
 | **RSK-02** | External Paystack Sandbox API rate limits or experiences network latency during testing. | Medium | Low | Medium | Implemented a resilient fallback mock gateway toggleable inside `paymentGateway.js`. | Adjei Douglas |
 | **RSK-03** | Team member communication bottlenecks during 3-week role handovers. | Medium | Medium | Medium | Daily asynchronous standups on GitHub Discussions; automated Jira/GitHub project boards. | Sandra Otu / Richard |
 | **RSK-04** | SMS Sandbox quota depletion during end-to-end integration tests. | Low | Medium | Low | SMS service prints formatted receipts directly to console as backup logging. | Ibrahim Mohammed |
+
+---
+
+## 4. Agile Sprint Retrospectives & Burndown Velocity
+*Documented by Documentation & Architecture Lead: Ibrahim Mohammed (Student ID: 5240101414) - Unit 4, 5 & 9*
+
+### 4.1 Sprint Metrics Summary
+| Metric | Sprint 1 (Foundation) | Sprint 2 (Core Engine) | Sprint 3 (Hardening & Release) | Overall Project |
+| :--- | :--- | :--- | :--- | :--- |
+| **Committed Points** | 18 | 24 | 16 | 58 |
+| **Completed Points** | 18 | 24 | 16 | 58 |
+| **Velocity Accuracy** | 100% | 100% | 100% | 100% |
+| **Defect Spillover** | 0 | 0 | 0 | 0 |
+| **Automated Test Coverage** | 100% (DB Schemas) | 100% (Mock Concurrency) | 100% (5/5 Passing Tests) | 100% |
+
+### 4.2 Sprint Retrospective Insights
+1. **What Went Well (Sprint 1–3):**
+   - Rotating roles every 3 weeks gave all 5 members hands-on leadership experience across Architecture, Coding, QA, and PM.
+   - Early establishment of SQLite schema and foreign key PRAGMA rules eliminated data discrepancies down the line.
+   - Using Jest for concurrency testing exposed race condition edge cases before presentation.
+
+2. **Lessons Learned & Process Improvements:**
+   - Case-sensitivity between Windows local paths and Git indexes required clear `.gitattributes` configuration.
+   - Mocking third-party API sandboxes locally shielded continuous integration from external network throttling.
+

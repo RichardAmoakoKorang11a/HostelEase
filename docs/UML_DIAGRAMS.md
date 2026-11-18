@@ -294,3 +294,13 @@ gantt
     Final Demo & Presentation Prep (Unit 9)  :done, s3_3, 2026-10-21, 2026-10-26
 ```
 *Vector Drawing File:* [`docs/diagrams/sprint_roadmap.svg`](diagrams/sprint_roadmap.svg)
+
+---
+
+## 8. Architectural Invariants & Data Integrity Guarantees (Unit 5)
+*Authored by Database & Architecture Lead: Ibrahim Mohammed (Student ID: 5240101414)*
+
+1. **Single-Occupancy Invariant:** No single room record in `rooms` shall simultaneously possess two active bookings (`status = 'PENDING'` or `'CONFIRMED'`).
+2. **Lock Expiration Invariant:** Any temporary lock record where `lock_expires_at < CURRENT_TIMESTAMP` is treated as mathematically equivalent to `status = 'AVAILABLE'` by the concurrency service.
+3. **Strategy Decoupling:** The `BookingService` interacts strictly through the `IPaymentGateway` abstraction, ensuring zero tight-coupling between checkout workflows and third-party vendor APIs.
+
