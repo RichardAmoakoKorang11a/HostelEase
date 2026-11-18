@@ -48,3 +48,12 @@ CREATE TABLE IF NOT EXISTS payments (
     FOREIGN KEY(booking_id) REFERENCES bookings(id)
 );
 
+-- Performance & Relational Integrity Indexes (Osei Sarfo Raphael - 5240101411 - Unit 6)
+CREATE INDEX IF NOT EXISTS idx_rooms_hostel ON rooms(hostel_id);
+CREATE INDEX IF NOT EXISTS idx_rooms_status ON rooms(status);
+CREATE INDEX IF NOT EXISTS idx_bookings_user ON bookings(user_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_room ON bookings(room_id);
+CREATE INDEX IF NOT EXISTS idx_bookings_reference ON bookings(reference);
+CREATE INDEX IF NOT EXISTS idx_payments_reference ON payments(reference);
+
+

@@ -2,10 +2,19 @@ const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
 
+/**
+ * HostelEase SQLite Database Configuration & Persistence Layer
+ * Module Author: Osei Sarfo Raphael (Student ID: 5240101411)
+ * Course: Software Engineering - Unit 6 (Data Architecture & Management)
+ */
+
 const dbPath = path.resolve(__dirname, '../../hostelease.db');
 const db = new sqlite3.Database(dbPath);
 
 db.serialize(() => {
+    // Enforce SQLite Foreign Key constraints for relational integrity (Unit 6)
+    db.run("PRAGMA foreign_keys = ON;");
+
     const schemaPath = path.resolve(__dirname, '../models/schema.sql');
     if (fs.existsSync(schemaPath)) {
         const schemaSql = fs.readFileSync(schemaPath, 'utf8');
@@ -59,5 +68,8 @@ module.exports = {
     }),
     run: (sql, params = []) => new Promise((resolve, reject) => {
         db.run(sql, params, function (err) { err ? reject(err) : resolve({ lastID: this.lastID, changes: this.changes }); });
+    }),
+    healthCheck: () => new Promise((resolve, reject) => {
+        db.get("SELECT 1 as healthy", (err, row) => err ? reject(err) : resolve(Boolean(row && row.healthy === 1)));
     })
 };
