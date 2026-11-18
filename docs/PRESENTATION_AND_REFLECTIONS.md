@@ -22,6 +22,18 @@
 | **6:30 - 8:30** | **Slide 7–8: Testing & QA** | Running Jest tests live (`npm test`), explaining race-condition prevention, equivalence partitioning, and boundary testing (Unit 7). | **Adjei Douglas** (5240101412) |
 | **8:30 - 10:00** | **Slide 9–10: Project Management & Trends** | Sprint velocity, 3-week role rotation, Risk Register mitigation (Unit 9), and Cloud/PWA readiness (Unit 10). Q&A handoff. | **Ibrahim Mohammed** (5240101414) |
 
+### 1.2 Speaker Handover Protocol & Demo Rehearsal Checklist
+*Coordinated by Frontend & Release Lead: Sandra Otu (Student ID: 5240101415) - Unit 4, 8 & 10*
+
+- **Cue 1 (2:00 mark):** Richard concludes problem statement and hands mic to Sandra: *"Now Sandra will walk us through our architectural models and design principles."*
+- **Cue 2 (4:00 mark):** Sandra concludes class & sequence diagrams: *"Let us now observe this architecture in action. Raphael will conduct the live booking demonstration."*
+- **Cue 3 (6:30 mark):** Raphael completes Paystack sandbox transaction: *"With the room locked and paid, Douglas will demonstrate how our test suite verifies zero race conditions."*
+- **Cue 4 (8:30 mark):** Douglas concludes Jest run: *"Finally, Ibrahim will present our project management metrics and future roadmap."*
+- **Q&A Readiness:**
+  - *Q: What happens if network drops during Paystack payment?* -> *A: The 15-minute SQLite lock expires automatically, returning room to AVAILABLE without orphan records.*
+  - *Q: How is double-booking prevented at the DB level?* -> *A: Through atomic conditional UPDATE with lock expiration timestamps.*
+
+
 ---
 
 ## Part 2: Individual One-Page Reflections (Linked to Course Units)

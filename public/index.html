@@ -304,6 +304,14 @@
             document.getElementById('bookingModal').classList.add('hidden');
         }
 
+        // Accessibility: Keyboard Navigation (Sandra Otu - Student ID: 5240101415 - Unit 8 & 10)
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeBookingModal();
+                closeAdminModal();
+            }
+        });
+
         // Initialize on page load
         loadHostels();
         loadRooms();
