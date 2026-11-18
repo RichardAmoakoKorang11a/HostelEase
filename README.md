@@ -22,6 +22,20 @@ Every academic semester, university students face massive challenges securing on
 - **15-Minute Concurrency Lock:** Prevents race conditions and double-booking during room rush.
 - **Cashless Payment Integration:** Supports Mobile Money (MoMo) and Card via the **Paystack Sandbox API**.
 - **Automated Offline Tickets:** Instant confirmation ticket dispatched directly to the student's phone via an **SMS Sandbox Gateway**.
+- **Admin Inventory Management:** Full CRUD capabilities (Add, Edit, Delete rooms) for hall administrators.
+
+---
+
+## ✅ Course Brief Final Submission Checklist (Week 8)
+
+| Brief Requirement | Project Deliverable / File Location | Status |
+| :--- | :--- | :--- |
+| **1. GitHub repo with commit history from every member** | 5 distinct member feature branches + `main` with authentic student commits: [GitHub Branches](https://github.com/RichardAmoakoKorang11a/HostelEase/branches) | **COMPLETE** |
+| **2. Final SRS, UML diagrams and design document** | [`docs/SRS.md`](docs/SRS.md) (IEEE 830), [`docs/UML_DIAGRAMS.md`](docs/UML_DIAGRAMS.md) (7 Models), [`docs/DESIGN_DOCUMENT.md`](docs/DESIGN_DOCUMENT.md) (IEEE 1016) | **COMPLETE** |
+| **3. Test plan with results (incl. automated test)** | [`docs/TEST_PLAN_AND_RESULTS.md`](docs/TEST_PLAN_AND_RESULTS.md) (IEEE 829), [`tests/booking.test.js`](tests/booking.test.js) (5/5 Automated Tests) | **COMPLETE** |
+| **4. Risk register and sprint plans** | [`docs/RISK_REGISTER_SPRINT_PLANS.md`](docs/RISK_REGISTER_SPRINT_PLANS.md) (4-point Risk Matrix & 3-Sprint Plans) | **COMPLETE** |
+| **5. 10-minute demo and presentation** | [`docs/PRESENTATION_AND_REFLECTIONS.md`](docs/PRESENTATION_AND_REFLECTIONS.md#part-1-10-minute-final-presentation--demo-script-5-team-members) (5 speakers, 2 min each, live cues) | **COMPLETE** |
+| **6. Individual one-page reflection linking >=2 units** | [`docs/PRESENTATION_AND_REFLECTIONS.md`](docs/PRESENTATION_AND_REFLECTIONS.md#part-2-individual-one-page-reflections-linked-to-course-units) (5 reflections covering Units 1–10) | **COMPLETE** |
 
 ---
 
@@ -168,8 +182,10 @@ HostelEase/
 ├── hostelease.db                 # SQLite database (auto-generated)
 ├── docs/
 │   ├── SRS.md                    # IEEE 830 Software Requirements Specification
-│   ├── UML_DIAGRAMS.md           # Mermaid UML Diagrams (Class, Sequence, etc.)
-│   ├── RISK_REGISTER_SPRINT_PLANS.md # Risk matrix & Sprint 1-3 plans
+│   ├── UML_DIAGRAMS.md           # 7 Native Mermaid UML Models & Architectural Invariants
+│   ├── DESIGN_DOCUMENT.md        # IEEE 1016 Software Design Description (SDD)
+│   ├── TEST_PLAN_AND_RESULTS.md  # IEEE 829 Software Test Plan & QA Execution Report
+│   ├── RISK_REGISTER_SPRINT_PLANS.md # 4-point Risk Matrix & 3-Sprint Plans
 │   ├── PRESENTATION_AND_REFLECTIONS.md # 10-minute demo script & 5 reflections
 │   └── diagrams/                 # 7 High-Resolution SVG Architectural Drawings
 │       ├── use_case_diagram.svg
