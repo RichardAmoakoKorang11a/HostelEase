@@ -51,3 +51,20 @@ HostelEase operates as a modern cloud-ready MVC web application backed by an SQL
 - **Reliability & Consistency:** Zero double-bookings allowed. All reservation state transitions must execute within atomic database transactions.
 - **Security:** Passwords salted with bcrypt. External webhook calls validated using HMAC-SHA512 token signatures.
 - **Usability:** Fully responsive layout tested on viewports from 320px (mobile) to 1920px (desktop).
+
+---
+
+## 4. Requirements Traceability Matrix (RTM)
+*Prepared by QA Lead: Adjei Douglas (Student ID: 5240101412) - Unit 3 & Unit 7*
+
+| Req ID | Requirement Description | Verification Method | Automated Test ID | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **FR-01** | Student authentication via Index ID & password | Automated / Unit | `TC-01` | **VERIFIED** |
+| **FR-02** | Room directory filter by gender, location & fees | Automated / Integration | `TC-01`, `TC-05` | **VERIFIED** |
+| **FR-03** | 15-minute concurrency bed lock reservation | Automated / Concurrency | `TC-01`, `TC-02` | **VERIFIED** |
+| **FR-04** | Automatic release of expired reservation lock | Automated / Boundary | `TC-04` | **VERIFIED** |
+| **FR-05** | Paystack sandbox payment authorization link | Automated / Mock Gateway | `TC-01`, `TC-03` | **VERIFIED** |
+| **FR-06** | SMS allocation confirmation ticket dispatch | Automated / Mock SMS | `TC-03` | **VERIFIED** |
+| **NFR-01** | Concurrency safety: Zero double-booking collision | Automated / Race-Condition | `TC-02` | **VERIFIED** |
+| **NFR-02** | Invalid room input rejection & error boundaries | Automated / Boundary | `TC-05` | **VERIFIED** |
+
