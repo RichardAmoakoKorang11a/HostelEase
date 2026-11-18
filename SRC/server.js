@@ -107,6 +107,30 @@ app.post('/api/bookings/pay-sandbox', async (req, res) => {
     }
 });
 
+// System Health Check & Team Roster (Richard Amoako Korang - Student ID: 5240101413 - Unit 1, 2 & 6)
+app.get('/api/health', async (req, res) => {
+    try {
+        const dbHealthy = await db.healthCheck();
+        res.json({
+            status: 'HEALTHY',
+            uptime: process.uptime(),
+            timestamp: new Date().toISOString(),
+            database: dbHealthy ? 'CONNECTED' : 'DISCONNECTED',
+            project: 'HostelEase',
+            group: 'Group 2',
+            members: [
+                { id: '5240101411', name: 'Osei Sarfo Raphael', branch: 'feature/database-seeding-raphael' },
+                { id: '5240101412', name: 'Adjei Douglas', branch: 'feature/srs-qa-testing-douglas' },
+                { id: '5240101413', name: 'Richard Amoako Korang', branch: 'feature/booking-engine-richard' },
+                { id: '5240101414', name: 'Ibrahim Mohammed', branch: 'feature/architecture-uml-ibrahim' },
+                { id: '5240101415', name: 'Sandra Otu', branch: 'feature/frontend-ui-sandra' }
+            ]
+        });
+    } catch (err) {
+        res.status(500).json({ status: 'UNHEALTHY', error: err.message });
+    }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`HostelEase server running at http://localhost:${PORT}`);
