@@ -196,8 +196,11 @@ HostelEase/
 │       ├── architecture_diagram.svg
 │       └── sprint_roadmap.svg
 ├── public/
-│   ├── index.html                # Responsive Tailwind CSS frontend
-│   └── diagrams.html             # Interactive Architecture Studio & Diagram Viewer
+│   ├── index.html                # Responsive web frontend (Offline & Online)
+│   ├── diagrams.html             # Interactive Architecture Studio & Diagram Viewer
+│   ├── css/
+│   │   └── style.css             # Standalone local stylesheet (Zero CDN/offline ready)
+│   └── diagrams/                 # 7 High-Resolution SVG Architectural Drawings
 ├── src/
 │   ├── server.js                 # Express application & API routing
 │   ├── config/

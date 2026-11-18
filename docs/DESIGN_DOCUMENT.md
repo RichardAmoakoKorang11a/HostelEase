@@ -158,3 +158,4 @@ WHERE id = ? AND (status = 'AVAILABLE' OR (status = 'LOCKED' AND lock_expires_at
 ### 6.2 Twilio / Hubtel SMS Gateway
 - **Payload:** `{ to: student.phone, message: "HostelEase: Booking #HE-XXXX confirmed for Room 101..." }`
 - **Simulation Mode:** Formatted SMS ticket is simultaneously dispatched and rendered in the application terminal console to enable audit logging without consuming cellular credit.
+
