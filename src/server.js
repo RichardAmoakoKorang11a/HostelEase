@@ -26,6 +26,16 @@ app.get('/api/hostels', async (req, res) => {
     }
 });
 
+// List all registered students / users
+app.get('/api/users', async (req, res) => {
+    try {
+        const users = await db.all(`SELECT id, student_id, full_name, email, phone, role FROM users ORDER BY student_id ASC`);
+        res.json(users);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
 // List all rooms (Read)
 app.get('/api/rooms', async (req, res) => {
     try {
@@ -89,7 +99,12 @@ app.delete('/api/rooms/:id', async (req, res) => {
 app.post('/api/bookings/reserve', async (req, res) => {
     try {
         const { userId, roomId } = req.body;
-        const result = await bookingService.reserveBedSpace(userId || 3, roomId);
+        let targetUserId = userId;
+        if (!targetUserId) {
+            const firstUser = await db.get("SELECT id FROM users LIMIT 1");
+            targetUserId = firstUser ? firstUser.id : 1;
+        }
+        const result = await bookingService.reserveBedSpace(targetUserId, roomId);
         res.json(result);
     } catch (err) {
         res.status(409).json({ error: err.message });

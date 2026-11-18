@@ -20,8 +20,15 @@
                 <button onclick="openAddModal()" class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1">
                     <span>➕</span> Add New Room
                 </button>
-                <div class="text-right hidden sm:block">
-                    <span class="text-xs bg-blue-800 px-3 py-1 rounded-full text-blue-200">User: Richard Amoako Korang (5240101413)</span>
+                <div class="flex items-center gap-1.5 bg-blue-800 px-3 py-1.5 rounded-lg border border-blue-600">
+                    <label for="studentSelector" class="text-xs text-blue-200 font-semibold whitespace-nowrap">Active Student:</label>
+                    <select id="studentSelector" class="bg-blue-900 text-white text-xs rounded px-2 py-1 border border-blue-500 focus:outline-none">
+                        <option value="2">Osei Sarfo Raphael (5240101411)</option>
+                        <option value="3">Adjei Douglas (5240101412)</option>
+                        <option value="4" selected>Richard Amoako Korang (5240101413)</option>
+                        <option value="5">Ibrahim Mohammed (5240101414)</option>
+                        <option value="6">Sandra Otu (5240101415)</option>
+                    </select>
                 </div>
             </div>
         </div>
@@ -263,14 +270,39 @@
             document.getElementById('roomFormModal').classList.add('hidden');
         }
 
+        const closeAdminModal = closeRoomFormModal;
+
+        // ==================== USERS & ACTIVE STUDENT ====================
+
+        async function loadUsers() {
+            try {
+                const res = await fetch('/api/users');
+                if (!res.ok) return;
+                const users = await res.json();
+                const sel = document.getElementById('studentSelector');
+                if (sel && users.length > 0) {
+                    sel.innerHTML = users.map(u => 
+                        `<option value="${u.id}">${u.full_name} (${u.student_id})</option>`
+                    ).join('');
+                    const defaultUser = users.find(u => u.student_id === '5240101413') || users[0];
+                    if (defaultUser) sel.value = defaultUser.id;
+                }
+            } catch (e) {
+                console.warn("Could not load dynamic users:", e);
+            }
+        }
+
         // ==================== BOOKING WORKFLOW ====================
 
         async function reserveRoom(roomId) {
             try {
+                const sel = document.getElementById('studentSelector');
+                const selectedUserId = sel ? parseInt(sel.value) : null;
+
                 const res = await fetch('/api/bookings/reserve', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: 3, roomId })
+                    body: JSON.stringify({ userId: selectedUserId, roomId })
                 });
                 const data = await res.json();
                 if (!res.ok) return alert(data.error);
@@ -313,6 +345,7 @@
         });
 
         // Initialize on page load
+        loadUsers();
         loadHostels();
         loadRooms();
     </script>
