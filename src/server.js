@@ -136,7 +136,7 @@ app.get('/api/health', async (req, res) => {
             members: [
                 { id: '5240101411', name: 'Osei Sarfo Raphael', branch: 'feature/database-seeding-raphael' },
                 { id: '5240101412', name: 'Adjei Douglas', branch: 'feature/srs-qa-testing-douglas' },
-                { id: '5240101413', name: 'Richard Amoako Korang', branch: 'feature/booking-engine-richard' },
+                { id: '5240101413', name: 'Richard Amoako Korang', branch: 'main (Project Lead & Integrator)' },
                 { id: '5240101414', name: 'Ibrahim Mohammed', branch: 'feature/architecture-uml-ibrahim' },
                 { id: '5240101415', name: 'Sandra Otu', branch: 'feature/frontend-ui-sandra' }
             ]
