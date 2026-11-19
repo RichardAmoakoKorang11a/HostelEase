@@ -6,6 +6,7 @@ const fs = require('fs');
  * HostelEase SQLite Database Configuration & Persistence Layer
  * Module Author: Osei Sarfo Raphael (Student ID: 5240101411)
  * Course: Software Engineering - Unit 6 (Data Architecture & Management)
+ * Pull Request Scope: Enforce SQLite foreign keys, composite indexing, and Group 2 student seeding.
  */
 
 const dbPath = path.resolve(__dirname, '../../hostelease.db');
