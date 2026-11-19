@@ -7,8 +7,11 @@
 1. **Osei Sarfo Raphael** (`5240101411`)
 2. **Adjei Douglas** (`5240101412`)
 3. **Richard Amoako Korang** (`5240101413`) – Project Lead
-4. **Ibrahim Mohammed** (`5240101414`)
+4. **Ibrahim Mohammed** (`5240101414`) – Architecture & Sprint Modeling Lead
 5. **Sandra Otu** (`5240101415`)
+
+> **Pull Request Scope:** Design 7 Visual UML Architectural Models in Mermaid & SVG, define architectural invariants, and formulate 4-point Risk Register and Sprint Plans.
+
 
 > 💡 **Interactive Studio:** View these drawings with live tab switching and PDF export by launching the app and visiting:  
 > 👉 **`http://localhost:3000/diagrams.html`**
