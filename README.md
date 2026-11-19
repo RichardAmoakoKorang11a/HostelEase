@@ -256,18 +256,18 @@ Snapshots:   0 total
 
 ---
 
-## 🌿 Agile Git Branching & Contributor Workflow
-*Documented by Project Lead: Richard Amoako Korang (Student ID: 5240101413)*
+## 🌿 Agile Git Flow & Pull Request Integration Workflow
+*Repository Maintained by Project Lead: Richard Amoako Korang (Student ID: 5240101413)*
 
-Each team member worked on an isolated feature branch aligned with their 3-week sprint role, thoroughly verifying tests before pull request integration:
+As Project Lead, **Richard Amoako Korang (`5240101413`)** manages the core **`main`** branch, architectural integration, and releases. Each group member worked on their own dedicated feature branch matching their 3-week sprint role and submitted Pull Requests merged directly into `main`:
 
-| Group Member | Student ID | Feature Branch | Core Ownership / Scope |
-| :--- | :--- | :--- | :--- |
-| **Osei Sarfo Raphael** | `5240101411` | [`feature/database-seeding-raphael`](https://github.com/RichardAmoakoKorang11a/HostelEase/tree/feature/database-seeding-raphael) | SQLite Schema DDL, Foreign Key Constraints, DB Seeding (Unit 6) |
-| **Adjei Douglas** | `5240101412` | [`feature/srs-qa-testing-douglas`](https://github.com/RichardAmoakoKorang11a/HostelEase/tree/feature/srs-qa-testing-douglas) | IEEE 830 SRS, RTM Traceability, Automated Jest Test Suite (Unit 3 & 7) |
-| **Ibrahim Mohammed** | `5240101414` | [`feature/architecture-uml-ibrahim`](https://github.com/RichardAmoakoKorang11a/HostelEase/tree/feature/architecture-uml-ibrahim) | Architecture Diagrams, 7 UML Models, Risk Register & Sprint Backlog (Unit 4, 5 & 9) |
-| **Sandra Otu** | `5240101415` | [`feature/frontend-ui-sandra`](https://github.com/RichardAmoakoKorang11a/HostelEase/tree/feature/frontend-ui-sandra) | Responsive UI, Interactive Studio, Keyboard ARIA Accessibility, Demo Guide (Unit 4, 8 & 10) |
-| **Richard Amoako Korang** | `5240101413` | [`feature/booking-engine-richard`](https://github.com/RichardAmoakoKorang11a/HostelEase/tree/feature/booking-engine-richard) | Express Server API, Concurrency Engine, Paystack & SMS Integration, Admin CRUD (Unit 1, 2, 5 & 6) |
+| Group Member | Student ID | Feature Branch | Role & Merged PR Scope | PR Status |
+| :--- | :--- | :--- | :--- | :---: |
+| **Osei Sarfo Raphael** | `5240101411` | [`feature/database-seeding-raphael`](https://github.com/RichardAmoakoKorang11a/HostelEase/tree/feature/database-seeding-raphael) | **PR #1:** SQLite Schema DDL, `PRAGMA foreign_keys = ON`, composite indexes, student seeding (Unit 6) | **MERGED** |
+| **Adjei Douglas** | `5240101412` | [`feature/srs-qa-testing-douglas`](https://github.com/RichardAmoakoKorang11a/HostelEase/tree/feature/srs-qa-testing-douglas) | **PR #2:** IEEE 830 SRS, IEEE 829 Test Plan, and Automated Jest Test Suite (`TC-01`–`TC-05`) (Unit 3 & 7) | **MERGED** |
+| **Ibrahim Mohammed** | `5240101414` | [`feature/architecture-uml-ibrahim`](https://github.com/RichardAmoakoKorang11a/HostelEase/tree/feature/architecture-uml-ibrahim) | **PR #3:** 7 UML Architectural Models, Risk Register, and 3-Sprint Plans (Unit 4, 5 & 9) | **MERGED** |
+| **Sandra Otu** | `5240101415` | [`feature/frontend-ui-sandra`](https://github.com/RichardAmoakoKorang11a/HostelEase/tree/feature/frontend-ui-sandra) | **PR #4:** Standalone Offline CSS, Architecture Studio, 10-Min Demo Guide, and Unit Reflections (Unit 4, 8 & 10) | **MERGED** |
+| **Richard Amoako Korang** | `5240101413` | **`main` (Default Branch)** | **Project Lead:** Express REST API, Concurrency Engine, Paystack & SMS Gateways, Master Integration | **ACTIVE** |
 
 ---
 
