@@ -54,7 +54,7 @@ db.serialize(() => {
         db.run(
             `INSERT INTO users (student_id, full_name, email, phone, role) 
              VALUES (?, ?, ?, ?, ?)
-             ON CONFLICT(student_id) DO UPDATE SET full_name = excluded.full_name, email = excluded.email`,
+             ON CONFLICT(student_id) DO UPDATE SET full_name = excluded.full_name, email = excluded.email, phone = excluded.phone, role = excluded.role`,
             [id, name, email, phone, role]
         );
     });

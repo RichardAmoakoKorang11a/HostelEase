@@ -58,9 +58,20 @@ app.post('/api/rooms', async (req, res) => {
         if (!hostel_id || !room_number || !price_per_semester) {
             return res.status(400).json({ error: "Hostel, room number, and price are required." });
         }
+        const numericPrice = parseFloat(price_per_semester);
+        if (isNaN(numericPrice) || numericPrice <= 0) {
+            return res.status(400).json({ error: "Price must be a valid positive number." });
+        }
+        const numericCapacity = parseInt(capacity) || 1;
+        if (numericCapacity <= 0) {
+            return res.status(400).json({ error: "Capacity must be at least 1." });
+        }
+        const validStatuses = ['AVAILABLE', 'LOCKED', 'OCCUPIED'];
+        const cleanStatus = validStatuses.includes(status) ? status : 'AVAILABLE';
+
         const result = await db.run(
             `INSERT INTO rooms (hostel_id, room_number, capacity, price_per_semester, status) VALUES (?, ?, ?, ?, ?)`,
-            [hostel_id, room_number, capacity || 1, price_per_semester, status || 'AVAILABLE']
+            [hostel_id, room_number.trim(), numericCapacity, numericPrice, cleanStatus]
         );
         res.status(201).json({ id: result.lastID, message: "Room created successfully." });
     } catch (err) {
@@ -73,10 +84,24 @@ app.put('/api/rooms/:id', async (req, res) => {
     try {
         const { id } = req.params;
         const { hostel_id, room_number, capacity, price_per_semester, status } = req.body;
-        await db.run(
+        if (!hostel_id || !room_number || !price_per_semester) {
+            return res.status(400).json({ error: "Hostel, room number, and price are required." });
+        }
+        const numericPrice = parseFloat(price_per_semester);
+        if (isNaN(numericPrice) || numericPrice <= 0) {
+            return res.status(400).json({ error: "Price must be a valid positive number." });
+        }
+        const numericCapacity = parseInt(capacity) || 1;
+        const validStatuses = ['AVAILABLE', 'LOCKED', 'OCCUPIED'];
+        const cleanStatus = validStatuses.includes(status) ? status : 'AVAILABLE';
+
+        const result = await db.run(
             `UPDATE rooms SET hostel_id = ?, room_number = ?, capacity = ?, price_per_semester = ?, status = ? WHERE id = ?`,
-            [hostel_id, room_number, capacity, price_per_semester, status, id]
+            [hostel_id, room_number.trim(), numericCapacity, numericPrice, cleanStatus, id]
         );
+        if (result.changes === 0) {
+            return res.status(404).json({ error: "Room not found." });
+        }
         res.json({ message: "Room updated successfully." });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -88,7 +113,10 @@ app.delete('/api/rooms/:id', async (req, res) => {
     try {
         const { id } = req.params;
         await db.run(`DELETE FROM bookings WHERE room_id = ?`, [id]);
-        await db.run(`DELETE FROM rooms WHERE id = ?`, [id]);
+        const result = await db.run(`DELETE FROM rooms WHERE id = ?`, [id]);
+        if (result.changes === 0) {
+            return res.status(404).json({ error: "Room not found." });
+        }
         res.json({ message: "Room deleted successfully." });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -115,7 +143,13 @@ app.post('/api/bookings/reserve', async (req, res) => {
 app.post('/api/bookings/pay-sandbox', async (req, res) => {
     try {
         const { reference } = req.body;
+        if (!reference) {
+            return res.status(400).json({ error: "Booking reference is required." });
+        }
         const result = await bookingService.confirmPayment(reference);
+        if (result.status !== 'CONFIRMED') {
+            return res.status(400).json(result);
+        }
         res.json(result);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -147,6 +181,14 @@ app.get('/api/health', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     console.log(`HostelEase server running at http://localhost:${PORT}`);
+});
+
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        console.warn(`HostelEase: Port ${PORT} is already in use by an active server instance.`);
+    } else {
+        console.error("Server runtime error:", err);
+    }
 });

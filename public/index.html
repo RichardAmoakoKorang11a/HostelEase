@@ -327,6 +327,9 @@
                     body: JSON.stringify({ reference: currentReference })
                 });
                 const data = await res.json();
+                if (!res.ok || data.status !== 'CONFIRMED') {
+                    return alert("Payment failed or invalid: " + (data.error || data.status || "Could not complete payment"));
+                }
                 alert("Payment Success! SMS ticket dispatched to student phone.");
                 closeBookingModal();
                 loadRooms();
