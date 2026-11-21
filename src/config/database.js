@@ -58,6 +58,13 @@ db.serialize(() => {
             [id, name, email, phone, role]
         );
     });
+
+    // Auto-release any expired room locks on database boot (Unit 4 State Machine)
+    db.run(
+        `UPDATE rooms SET status = 'AVAILABLE', lock_expires_at = NULL 
+         WHERE status = 'LOCKED' AND lock_expires_at IS NOT NULL AND lock_expires_at < ?`,
+        [new Date().toISOString()]
+    );
 });
 
 module.exports = {

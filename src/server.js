@@ -36,9 +36,22 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
-// List all rooms (Read)
+// List all rooms (Read) - auto-releases expired 15-min locks per Unit 4 State Machine
 app.get('/api/rooms', async (req, res) => {
     try {
+        const now = new Date().toISOString();
+        await db.run(
+            `UPDATE rooms SET status = 'AVAILABLE', lock_expires_at = NULL 
+             WHERE status = 'LOCKED' AND lock_expires_at IS NOT NULL AND lock_expires_at < ?`,
+            [now]
+        );
+        await db.run(
+            `UPDATE bookings SET status = 'EXPIRED' 
+             WHERE status = 'PENDING' AND room_id IN (
+                 SELECT id FROM rooms WHERE status = 'AVAILABLE'
+             )`
+        );
+
         const rooms = await db.all(`
             SELECT r.*, h.name as hostel_name, h.gender_type, h.campus_location
             FROM rooms r
