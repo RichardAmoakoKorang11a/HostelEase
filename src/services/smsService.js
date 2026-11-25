@@ -5,6 +5,19 @@ const https = require('https');
  * Supports Twilio REST API, Arkesel Ghana SMS API, and automatic offline sandbox fallback.
  */
 class SMSService {
+    constructor() {
+        this.logs = [];
+    }
+
+    _recordLog(entry) {
+        this.logs.unshift({ ...entry, timestamp: new Date().toISOString() });
+        if (this.logs.length > 50) this.logs.pop();
+    }
+
+    getLogs() {
+        return this.logs;
+    }
+
     isTwilioConfigured() {
         const sid = process.env.TWILIO_ACCOUNT_SID || '';
         const token = process.env.TWILIO_AUTH_TOKEN || '';
@@ -104,7 +117,9 @@ class SMSService {
     async sendSMS(phoneNumber, message) {
         if (this.isArkeselConfigured()) {
             try {
-                return await this._sendViaArkesel(phoneNumber, message);
+                const res = await this._sendViaArkesel(phoneNumber, message);
+                this._recordLog({ type: 'SMS', to: phoneNumber, subject: 'SMS Alert', summary: message, mode: res.mode });
+                return res;
             } catch (err) {
                 console.warn('Arkesel SMS failed, falling back to sandbox:', err.message);
             }
@@ -112,7 +127,9 @@ class SMSService {
 
         if (this.isTwilioConfigured()) {
             try {
-                return await this._sendViaTwilio(phoneNumber, message);
+                const res = await this._sendViaTwilio(phoneNumber, message);
+                this._recordLog({ type: 'SMS', to: phoneNumber, subject: 'SMS Alert', summary: message, mode: res.mode });
+                return res;
             } catch (err) {
                 console.warn('Twilio SMS failed, falling back to sandbox:', err.message);
             }
@@ -124,11 +141,13 @@ class SMSService {
         console.log(`Message: ${message}`);
         console.log(`========================================\n`);
 
-        return {
+        const sandboxRes = {
             success: true,
             mode: 'SMS_SANDBOX',
             messageId: `SM_SANDBOX_${Date.now()}`
         };
+        this._recordLog({ type: 'SMS', to: phoneNumber, subject: 'SMS Alert', summary: message, mode: sandboxRes.mode });
+        return sandboxRes;
     }
 }
 

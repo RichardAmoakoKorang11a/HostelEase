@@ -41,6 +41,41 @@
         <!-- Room Cards Grid -->
         <div id="roomContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
 
+        <!-- Transactions & Admin Notification Feed -->
+        <section id="activitySection" class="mt-5 pt-3 border-t border-gray-200">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-3">
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-base font-bold text-gray-800">💳 Paystack Transactions</h3>
+                        <button onclick="loadPayments()" class="text-xs text-blue-600 font-semibold">Refresh</button>
+                    </div>
+                    <div id="paymentsList" class="text-xs text-gray-600">Loading transactions...</div>
+                </div>
+
+                <div class="bg-white border border-gray-200 rounded-xl shadow-sm p-5">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="text-base font-bold text-gray-800">📩 Admin Email &amp; SMS Alerts</h3>
+                        <button onclick="loadNotifications()" class="text-xs text-blue-600 font-semibold">Refresh</button>
+                    </div>
+                    <div id="notificationsList" class="text-xs text-gray-600">Loading alerts...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Payment & Notification Receipt Modal -->
+        <div id="receiptModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-lg font-bold text-green-700">✅ Paystack Payment Confirmed</h3>
+                    <button onclick="closeReceiptModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+                </div>
+                <div id="receiptDetails" class="bg-gray-50 border border-gray-200 rounded-lg p-4 text-xs text-gray-700 mb-4"></div>
+                <div class="flex justify-end">
+                    <button onclick="closeReceiptModal()" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg text-sm transition">Done</button>
+                </div>
+            </div>
+        </div>
+
         <!-- Paystack Reservation & Checkout Modal -->
         <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
             <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
@@ -489,6 +524,7 @@
                 startCountdown(data.lockExpiresAt || Date.now() + 15 * 60 * 1000);
                 document.getElementById('bookingModal').classList.remove('hidden');
                 loadRooms();
+                loadNotifications();
             } catch (err) {
                 alert("Reservation error: " + err.message);
             }
@@ -518,11 +554,79 @@
                 if (!res.ok || data.status !== 'CONFIRMED') {
                     return alert("Paystack verification failed: " + (data.error || data.status || "Could not complete payment"));
                 }
-                alert(`Paystack Payment Confirmed!\nRef: ${data.reference}\nChannel: ${data.channel}\nSMS ticket dispatched to student phone.`);
                 closeBookingModal();
+                showReceiptModal(data);
                 loadRooms();
+                loadPayments();
+                loadNotifications();
             } catch (err) {
                 alert("Payment error: " + err.message);
+            }
+        }
+
+        function showReceiptModal(data) {
+            const n = data.notifications || {};
+            const emailMode = n.adminEmail ? n.adminEmail.mode : 'EMAIL_SANDBOX';
+            const smsMode = n.adminSms ? n.adminSms.mode : (n.studentSms ? n.studentSms.mode : 'SMS_SANDBOX');
+            document.getElementById('receiptDetails').innerHTML = `
+                <p class="mb-2"><strong>Reference:</strong> <span class="font-mono text-blue-700">${data.reference}</span></p>
+                <p class="mb-2"><strong>Amount Paid:</strong> GHS ${Number(data.amount || 0).toFixed(2)}</p>
+                <p class="mb-2"><strong>Paystack Channel:</strong> ${data.channel}</p>
+                <p class="mb-2"><strong>Admin Email Alert:</strong> Dispatched (${emailMode})</p>
+                <p><strong>Admin &amp; Student SMS:</strong> Dispatched (${smsMode})</p>
+            `;
+            document.getElementById('receiptModal').classList.remove('hidden');
+        }
+
+        function closeReceiptModal() {
+            document.getElementById('receiptModal').classList.add('hidden');
+        }
+
+        async function loadPayments() {
+            const el = document.getElementById('paymentsList');
+            if (!el) return;
+            try {
+                const res = await fetch('/api/payments');
+                const items = await res.json();
+                if (!items || items.length === 0) {
+                    el.innerHTML = '<p class="text-gray-400">No Paystack transactions recorded yet.</p>';
+                    return;
+                }
+                el.innerHTML = items.slice(0, 6).map(p => `
+                    <div class="py-2 border-b border-gray-100 flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-gray-800">${p.hostel_name} - ${p.room_number} (${p.reference})</p>
+                            <p class="text-gray-500">${p.full_name} • ${p.channel}</p>
+                        </div>
+                        <span class="font-bold text-green-700">GHS ${Number(p.amount).toFixed(2)}</span>
+                    </div>
+                `).join('');
+            } catch (e) {
+                el.innerHTML = '<p class="text-red-500">Could not load transactions.</p>';
+            }
+        }
+
+        async function loadNotifications() {
+            const el = document.getElementById('notificationsList');
+            if (!el) return;
+            try {
+                const res = await fetch('/api/notifications/logs');
+                const items = await res.json();
+                if (!items || items.length === 0) {
+                    el.innerHTML = '<p class="text-gray-400">No Email or SMS alerts dispatched in this session yet.</p>';
+                    return;
+                }
+                el.innerHTML = items.slice(0, 6).map(n => `
+                    <div class="py-2 border-b border-gray-100">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-gray-800">${n.type === 'EMAIL' ? '📧 EMAIL' : '📱 SMS'} → ${n.to}</span>
+                            <span class="px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-mono">${n.mode}</span>
+                        </div>
+                        <p class="text-gray-500 mt-1">${n.subject}: ${n.summary.slice(0, 90)}${n.summary.length > 90 ? '...' : ''}</p>
+                    </div>
+                `).join('');
+            } catch (e) {
+                el.innerHTML = '<p class="text-red-500">Could not load alert logs.</p>';
             }
         }
 
@@ -540,6 +644,7 @@
                 closeBookingModal();
                 closeAdminModal();
                 closeAuthModal();
+                closeReceiptModal();
             }
         });
 
@@ -547,6 +652,8 @@
         loadUsers();
         loadHostels();
         loadRooms();
+        loadPayments();
+        loadNotifications();
     </script>
 </body>
 </html>

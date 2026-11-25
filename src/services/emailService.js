@@ -6,6 +6,19 @@ const tls = require('tls');
  * Supports Gmail/SMTP over TLS (port 465), Resend HTTPS API, and automatic offline sandbox fallback.
  */
 class EmailService {
+    constructor() {
+        this.logs = [];
+    }
+
+    _recordLog(entry) {
+        this.logs.unshift({ ...entry, timestamp: new Date().toISOString() });
+        if (this.logs.length > 50) this.logs.pop();
+    }
+
+    getLogs() {
+        return this.logs;
+    }
+
     isResendConfigured() {
         const key = process.env.RESEND_API_KEY || '';
         return Boolean(key && key.startsWith('re_') && !key.includes('mock'));
@@ -141,7 +154,9 @@ class EmailService {
     async sendEmail({ to, subject, text, html }) {
         if (this.isResendConfigured()) {
             try {
-                return await this._sendViaResend({ to, subject, text, html: html || `<pre>${text}</pre>` });
+                const res = await this._sendViaResend({ to, subject, text, html: html || `<pre>${text}</pre>` });
+                this._recordLog({ type: 'EMAIL', to, subject, summary: text, mode: res.mode });
+                return res;
             } catch (err) {
                 console.warn('Resend email failed, falling back to sandbox:', err.message);
             }
@@ -149,7 +164,9 @@ class EmailService {
 
         if (this.isSmtpConfigured()) {
             try {
-                return await this._sendViaSmtp({ to, subject, text });
+                const res = await this._sendViaSmtp({ to, subject, text });
+                this._recordLog({ type: 'EMAIL', to, subject, summary: text, mode: res.mode });
+                return res;
             } catch (err) {
                 console.warn('SMTP email failed, falling back to sandbox:', err.message);
             }
@@ -162,11 +179,13 @@ class EmailService {
         console.log(`Body:\n${text}`);
         console.log(`========================================\n`);
 
-        return {
+        const sandboxRes = {
             success: true,
             mode: 'EMAIL_SANDBOX',
             messageId: `EM_SANDBOX_${Date.now()}`
         };
+        this._recordLog({ type: 'EMAIL', to, subject, summary: text, mode: sandboxRes.mode });
+        return sandboxRes;
     }
 }
 

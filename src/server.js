@@ -247,6 +247,13 @@ app.post('/api/notifications/test', async (req, res) => {
     }
 });
 
+app.get('/api/notifications/logs', (req, res) => {
+    const combined = [...emailService.getLogs(), ...smsService.getLogs()]
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+        .slice(0, 30);
+    res.json(combined);
+});
+
 // System Health Check & Team Roster
 app.get('/api/health', async (req, res) => {
     try {
