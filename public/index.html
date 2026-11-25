@@ -307,6 +307,13 @@
                 status: document.getElementById('formStatus').value
             };
 
+            const saveBtn = document.getElementById('saveButton');
+            if (saveBtn) {
+                if (saveBtn.disabled) return;
+                saveBtn.disabled = true;
+                saveBtn.innerText = 'Saving...';
+            }
+
             try {
                 const url = id ? `/api/rooms/${id}` : '/api/rooms';
                 const method = id ? 'PUT' : 'POST';
@@ -326,6 +333,11 @@
                 loadRooms();
             } catch (err) {
                 alert("Failed to save room: " + err.message);
+            } finally {
+                if (saveBtn) {
+                    saveBtn.disabled = false;
+                    saveBtn.innerText = 'Save Room';
+                }
             }
         }
 
@@ -542,7 +554,18 @@
             }
         }
 
+        let isProcessingPayment = false;
+
         async function simulatePayment() {
+            if (isProcessingPayment) return;
+            const payBtn = document.getElementById('paystackPayBtn');
+            const originalLabel = payBtn ? payBtn.innerText : 'Pay with Paystack';
+            isProcessingPayment = true;
+            if (payBtn) {
+                payBtn.disabled = true;
+                payBtn.innerText = 'Processing Paystack...';
+            }
+
             try {
                 const channel = document.getElementById('paystackChannel').value || 'MOBILE_MONEY';
                 const res = await fetch('/api/bookings/pay-sandbox', {
@@ -561,6 +584,12 @@
                 loadNotifications();
             } catch (err) {
                 alert("Payment error: " + err.message);
+            } finally {
+                isProcessingPayment = false;
+                if (payBtn) {
+                    payBtn.disabled = false;
+                    payBtn.innerText = originalLabel;
+                }
             }
         }
 

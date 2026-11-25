@@ -106,38 +106,46 @@ class BookingService {
         const studentPhone = user ? user.phone : '+233240000001';
         const studentEmail = user ? user.email : 'student@campus.edu';
 
-        // 1. Send Student SMS confirmation ticket
-        const studentSms = await this.sms.sendSMS(
-            studentPhone,
-            `HostelEase: Hello ${studentName}, your Paystack payment for booking #${reference} (${roomLabel}) is CONFIRMED. Present this SMS at the hall porter's desk.`
-        );
+        // Dispatch Student & Admin notifications in parallel for fast response
+        const smsMsg = `HostelEase: Hello ${studentName}, your Paystack payment for booking #${reference} (${roomLabel}) is CONFIRMED. Present this SMS at the hall porter's desk.`;
 
         let studentEmailResult = null;
         let adminEmailResult = null;
         let adminSmsResult = null;
 
-        // 2. Send Student Email + Admin Email & Admin SMS (when emailService is wired)
-        if (this.email) {
-            const adminEmail = process.env.ADMIN_EMAIL || 'ramoako300@gmail.com';
-            const adminPhones = [...new Set([process.env.ADMIN_PHONE || '+233551430412', process.env.ADMIN_PHONE_ALT].filter(Boolean))];
+        if (!this.email) {
+            const studentSms = await this.sms.sendSMS(studentPhone, smsMsg);
+            return {
+                status: 'CONFIRMED',
+                reference,
+                amount,
+                channel,
+                notifications: { studentSms, studentEmail: null, adminSms: null, adminEmail: null }
+            };
+        }
 
-            studentEmailResult = await this.email.sendEmail({
+        const adminEmail = process.env.ADMIN_EMAIL || 'ramoako300@gmail.com';
+        const adminPhones = [...new Set([process.env.ADMIN_PHONE || '+233551430412', process.env.ADMIN_PHONE_ALT].filter(Boolean))];
+        const adminMsg = `HostelEase ADMIN ALERT: GHS ${amount} paid via Paystack (${channel}) by ${studentName} for ${roomLabel}. Ref: #${reference}.`;
+
+        const [studentSms, sEmail, aEmail, ...aSmsList] = await Promise.all([
+            this.sms.sendSMS(studentPhone, smsMsg),
+            this.email.sendEmail({
                 to: studentEmail,
                 subject: `HostelEase Receipt: Booking #${reference} Confirmed`,
                 text: `Hello ${studentName},\n\nYour Paystack payment of GHS ${amount} (${channel}) for ${roomLabel} has been confirmed.\nBooking Reference: ${reference}\n\nPresent this confirmation at the hall porter's desk.`
-            });
-
-            adminEmailResult = await this.email.sendEmail({
+            }),
+            this.email.sendEmail({
                 to: adminEmail,
                 subject: `[HostelEase Admin Alert] Payment Received - GHS ${amount} (#${reference})`,
                 text: `HostelEase Transaction Notification\n\nStatus: CONFIRMED\nReference: ${reference}\nAmount: GHS ${amount}\nChannel: ${channel}\nRoom: ${roomLabel}\nStudent: ${studentName} (${studentEmail}, ${studentPhone})\nTime: ${new Date().toISOString()}`
-            });
+            }),
+            ...adminPhones.map((phone) => this.sms.sendSMS(phone, adminMsg))
+        ]);
 
-            const adminMsg = `HostelEase ADMIN ALERT: GHS ${amount} paid via Paystack (${channel}) by ${studentName} for ${roomLabel}. Ref: #${reference}.`;
-            for (const phone of adminPhones) {
-                adminSmsResult = await this.sms.sendSMS(phone, adminMsg);
-            }
-        }
+        studentEmailResult = sEmail;
+        adminEmailResult = aEmail;
+        adminSmsResult = aSmsList[0] || null;
 
         return {
             status: 'CONFIRMED',
