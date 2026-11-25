@@ -47,18 +47,20 @@ class BookingService {
 
         // Notify Admin on new reservation transaction (live server mode)
         if (this.email) {
-            const adminEmail = process.env.ADMIN_EMAIL || 'Ramoako300@gmail.com';
-            const adminPhone = process.env.ADMIN_PHONE || '+233240000003';
+            const adminEmail = process.env.ADMIN_EMAIL || 'ramoako300@gmail.com';
+            const adminPhones = [process.env.ADMIN_PHONE || '+233551430412', process.env.ADMIN_PHONE_ALT].filter(Boolean);
             this.email.sendEmail({
                 to: adminEmail,
                 subject: `[HostelEase Admin Alert] New Room Reservation Pending (#${reference})`,
                 text: `New transaction initiated:\nReference: ${reference}\nRoom: ${room.room_number}\nAmount: GHS ${room.price_per_semester}\nStudent Email: ${studentEmail}\nStatus: LOCKED (15-min window)`
             }).catch((e) => console.warn('Admin reservation email error:', e.message));
 
-            this.sms.sendSMS(
-                adminPhone,
-                `HostelEase ADMIN: New reservation #${reference} started for ${room.room_number} (GHS ${room.price_per_semester}) by ${studentEmail}.`
-            ).catch((e) => console.warn('Admin reservation SMS error:', e.message));
+            for (const phone of [...new Set(adminPhones)]) {
+                this.sms.sendSMS(
+                    phone,
+                    `HostelEase ADMIN: New reservation #${reference} started for ${room.room_number} (GHS ${room.price_per_semester}) by ${studentEmail}.`
+                ).catch((e) => console.warn('Admin reservation SMS error:', e.message));
+            }
         }
 
         return {
@@ -116,8 +118,8 @@ class BookingService {
 
         // 2. Send Student Email + Admin Email & Admin SMS (when emailService is wired)
         if (this.email) {
-            const adminEmail = process.env.ADMIN_EMAIL || 'Ramoako300@gmail.com';
-            const adminPhone = process.env.ADMIN_PHONE || '+233240000003';
+            const adminEmail = process.env.ADMIN_EMAIL || 'ramoako300@gmail.com';
+            const adminPhones = [...new Set([process.env.ADMIN_PHONE || '+233551430412', process.env.ADMIN_PHONE_ALT].filter(Boolean))];
 
             studentEmailResult = await this.email.sendEmail({
                 to: studentEmail,
@@ -131,16 +133,9 @@ class BookingService {
                 text: `HostelEase Transaction Notification\n\nStatus: CONFIRMED\nReference: ${reference}\nAmount: GHS ${amount}\nChannel: ${channel}\nRoom: ${roomLabel}\nStudent: ${studentName} (${studentEmail}, ${studentPhone})\nTime: ${new Date().toISOString()}`
             });
 
-            if (adminPhone !== studentPhone) {
-                adminSmsResult = await this.sms.sendSMS(
-                    adminPhone,
-                    `HostelEase ADMIN ALERT: GHS ${amount} paid via Paystack (${channel}) by ${studentName} for ${roomLabel}. Ref: #${reference}.`
-                );
-            } else {
-                adminSmsResult = await this.sms.sendSMS(
-                    adminPhone,
-                    `HostelEase ADMIN ALERT: Payment of GHS ${amount} (${channel}) for ${roomLabel} CONFIRMED. Ref: #${reference}.`
-                );
+            const adminMsg = `HostelEase ADMIN ALERT: GHS ${amount} paid via Paystack (${channel}) by ${studentName} for ${roomLabel}. Ref: #${reference}.`;
+            for (const phone of adminPhones) {
+                adminSmsResult = await this.sms.sendSMS(phone, adminMsg);
             }
         }
 

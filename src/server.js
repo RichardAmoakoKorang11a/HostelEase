@@ -221,8 +221,8 @@ app.get('/api/payments', async (req, res) => {
 // Notification gateway status & Admin alert test
 app.get('/api/notifications/status', (req, res) => {
     res.json({
-        adminEmail: process.env.ADMIN_EMAIL || 'Ramoako300@gmail.com',
-        adminPhone: process.env.ADMIN_PHONE || '+233240000003',
+        adminEmail: process.env.ADMIN_EMAIL || 'ramoako300@gmail.com',
+        adminPhones: [process.env.ADMIN_PHONE || '+233551430412', process.env.ADMIN_PHONE_ALT].filter(Boolean),
         emailMode: emailService.isResendConfigured() ? 'RESEND_LIVE' : (emailService.isSmtpConfigured() ? 'SMTP_LIVE' : 'EMAIL_SANDBOX'),
         smsMode: smsService.isArkeselConfigured() ? 'ARKESEL_LIVE' : (smsService.isTwilioConfigured() ? 'TWILIO_LIVE' : 'SMS_SANDBOX')
     });
@@ -230,18 +230,23 @@ app.get('/api/notifications/status', (req, res) => {
 
 app.post('/api/notifications/test', async (req, res) => {
     try {
-        const adminEmail = (req.body && req.body.email) || process.env.ADMIN_EMAIL || 'Ramoako300@gmail.com';
-        const adminPhone = (req.body && req.body.phone) || process.env.ADMIN_PHONE || '+233240000003';
+        const adminEmail = (req.body && req.body.email) || process.env.ADMIN_EMAIL || 'ramoako300@gmail.com';
+        const adminPhones = (req.body && req.body.phone)
+            ? [req.body.phone]
+            : [...new Set([process.env.ADMIN_PHONE || '+233551430412', process.env.ADMIN_PHONE_ALT].filter(Boolean))];
         const emailResult = await emailService.sendEmail({
             to: adminEmail,
             subject: '[HostelEase Admin Alert] Live Notification Test',
             text: `Hello Admin,\n\nYour HostelEase email alert channel is active (${new Date().toISOString()}).`
         });
-        const smsResult = await smsService.sendSMS(
-            adminPhone,
-            `HostelEase ADMIN TEST: Your SMS alert channel is active (${new Date().toISOString()}).`
-        );
-        res.json({ ok: true, emailResult, smsResult });
+        const smsResults = [];
+        for (const phone of adminPhones) {
+            smsResults.push(await smsService.sendSMS(
+                phone,
+                `HostelEase ADMIN TEST: Your SMS alert channel is active (${new Date().toISOString()}).`
+            ));
+        }
+        res.json({ ok: true, emailResult, smsResults });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

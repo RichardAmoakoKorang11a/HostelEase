@@ -43,7 +43,7 @@ db.serialize(() => {
     const group2Members = [
         ['5240101411', 'Osei Sarfo Raphael', '5240101411@campus.edu', '+233240000001', 'STUDENT'],
         ['5240101412', 'Adjei Douglas', '5240101412@campus.edu', '+233240000002', 'STUDENT'],
-        ['5240101413', 'Richard Amoako Korang', 'Ramoako300@gmail.com', '+233240000003', 'LEAD_DEV'],
+        ['5240101413', 'Richard Amoako Korang', 'ramoako300@gmail.com', '+233551430412', 'LEAD_DEV'],
         ['5240101414', 'Ibrahim Mohammed', '5240101414@campus.edu', '+233240000004', 'STUDENT'],
         ['5240101415', 'Sandra Otu', '5240101415@campus.edu', '+233240000005', 'STUDENT']
     ];
