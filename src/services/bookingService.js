@@ -1,10 +1,11 @@
 const crypto = require('crypto');
 
 class BookingService {
-    constructor(dbClient, paymentGateway, notificationService) {
+    constructor(dbClient, paymentGateway, notificationService, emailService = null) {
         this.db = dbClient;
         this.payment = paymentGateway;
         this.sms = notificationService;
+        this.email = emailService;
     }
 
     async reserveBedSpace(userId, roomId) {
@@ -44,6 +45,22 @@ class BookingService {
             email: studentEmail
         });
 
+        // Notify Admin on new reservation transaction (live server mode)
+        if (this.email) {
+            const adminEmail = process.env.ADMIN_EMAIL || 'Ramoako300@gmail.com';
+            const adminPhone = process.env.ADMIN_PHONE || '+233240000003';
+            this.email.sendEmail({
+                to: adminEmail,
+                subject: `[HostelEase Admin Alert] New Room Reservation Pending (#${reference})`,
+                text: `New transaction initiated:\nReference: ${reference}\nRoom: ${room.room_number}\nAmount: GHS ${room.price_per_semester}\nStudent Email: ${studentEmail}\nStatus: LOCKED (15-min window)`
+            }).catch((e) => console.warn('Admin reservation email error:', e.message));
+
+            this.sms.sendSMS(
+                adminPhone,
+                `HostelEase ADMIN: New reservation #${reference} started for ${room.room_number} (GHS ${room.price_per_semester}) by ${studentEmail}.`
+            ).catch((e) => console.warn('Admin reservation SMS error:', e.message));
+        }
+
         return {
             bookingId: booking.lastID,
             reference,
@@ -74,21 +91,71 @@ class BookingService {
 
         const room = await this.db.get(`SELECT room_number, price_per_semester FROM rooms WHERE id = ?`, [booking.room_id]);
         const amount = room && room.price_per_semester ? room.price_per_semester : 0;
+        const roomLabel = room ? room.room_number : 'Room';
 
         await this.db.run(
             `INSERT OR IGNORE INTO payments (booking_id, reference, amount, channel, status) VALUES (?, ?, ?, ?, 'SUCCESS')`,
             [booking.id, reference, amount, channel]
         );
 
-        // Send SMS confirmation ticket
-        const user = await this.db.get(`SELECT phone, full_name FROM users WHERE id = ?`, [booking.user_id]);
+        // Fetch student info for notifications
+        const user = await this.db.get(`SELECT phone, full_name, email FROM users WHERE id = ?`, [booking.user_id]);
+        const studentName = user ? user.full_name : 'Student';
+        const studentPhone = user ? user.phone : '+233240000001';
+        const studentEmail = user ? user.email : 'student@campus.edu';
 
-        await this.sms.sendSMS(
-            user ? user.phone : '+233240000001',
-            `HostelEase: Hello ${user ? user.full_name : 'Student'}, your Paystack payment for booking #${reference} (${room ? room.room_number : 'Room'}) is CONFIRMED. Present this SMS at the hall porter's desk.`
+        // 1. Send Student SMS confirmation ticket
+        const studentSms = await this.sms.sendSMS(
+            studentPhone,
+            `HostelEase: Hello ${studentName}, your Paystack payment for booking #${reference} (${roomLabel}) is CONFIRMED. Present this SMS at the hall porter's desk.`
         );
 
-        return { status: 'CONFIRMED', reference, amount, channel };
+        let studentEmailResult = null;
+        let adminEmailResult = null;
+        let adminSmsResult = null;
+
+        // 2. Send Student Email + Admin Email & Admin SMS (when emailService is wired)
+        if (this.email) {
+            const adminEmail = process.env.ADMIN_EMAIL || 'Ramoako300@gmail.com';
+            const adminPhone = process.env.ADMIN_PHONE || '+233240000003';
+
+            studentEmailResult = await this.email.sendEmail({
+                to: studentEmail,
+                subject: `HostelEase Receipt: Booking #${reference} Confirmed`,
+                text: `Hello ${studentName},\n\nYour Paystack payment of GHS ${amount} (${channel}) for ${roomLabel} has been confirmed.\nBooking Reference: ${reference}\n\nPresent this confirmation at the hall porter's desk.`
+            });
+
+            adminEmailResult = await this.email.sendEmail({
+                to: adminEmail,
+                subject: `[HostelEase Admin Alert] Payment Received - GHS ${amount} (#${reference})`,
+                text: `HostelEase Transaction Notification\n\nStatus: CONFIRMED\nReference: ${reference}\nAmount: GHS ${amount}\nChannel: ${channel}\nRoom: ${roomLabel}\nStudent: ${studentName} (${studentEmail}, ${studentPhone})\nTime: ${new Date().toISOString()}`
+            });
+
+            if (adminPhone !== studentPhone) {
+                adminSmsResult = await this.sms.sendSMS(
+                    adminPhone,
+                    `HostelEase ADMIN ALERT: GHS ${amount} paid via Paystack (${channel}) by ${studentName} for ${roomLabel}. Ref: #${reference}.`
+                );
+            } else {
+                adminSmsResult = await this.sms.sendSMS(
+                    adminPhone,
+                    `HostelEase ADMIN ALERT: Payment of GHS ${amount} (${channel}) for ${roomLabel} CONFIRMED. Ref: #${reference}.`
+                );
+            }
+        }
+
+        return {
+            status: 'CONFIRMED',
+            reference,
+            amount,
+            channel,
+            notifications: {
+                studentSms,
+                studentEmail: studentEmailResult,
+                adminSms: adminSmsResult,
+                adminEmail: adminEmailResult
+            }
+        };
     }
 }
 

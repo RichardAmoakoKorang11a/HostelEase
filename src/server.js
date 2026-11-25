@@ -6,10 +6,11 @@ require('dotenv').config();
 const db = require('./config/database');
 const paymentGateway = require('./services/paymentGateway');
 const smsService = require('./services/smsService');
+const emailService = require('./services/emailService');
 const BookingService = require('./services/bookingService');
 
 const app = express();
-const bookingService = new BookingService(db, paymentGateway, smsService);
+const bookingService = new BookingService(db, paymentGateway, smsService, emailService);
 
 app.use(cors());
 app.use(express.json());
@@ -212,6 +213,35 @@ app.get('/api/payments', async (req, res) => {
             ORDER BY p.paid_at DESC
         `);
         res.json(payments);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Notification gateway status & Admin alert test
+app.get('/api/notifications/status', (req, res) => {
+    res.json({
+        adminEmail: process.env.ADMIN_EMAIL || 'Ramoako300@gmail.com',
+        adminPhone: process.env.ADMIN_PHONE || '+233240000003',
+        emailMode: emailService.isResendConfigured() ? 'RESEND_LIVE' : (emailService.isSmtpConfigured() ? 'SMTP_LIVE' : 'EMAIL_SANDBOX'),
+        smsMode: smsService.isArkeselConfigured() ? 'ARKESEL_LIVE' : (smsService.isTwilioConfigured() ? 'TWILIO_LIVE' : 'SMS_SANDBOX')
+    });
+});
+
+app.post('/api/notifications/test', async (req, res) => {
+    try {
+        const adminEmail = (req.body && req.body.email) || process.env.ADMIN_EMAIL || 'Ramoako300@gmail.com';
+        const adminPhone = (req.body && req.body.phone) || process.env.ADMIN_PHONE || '+233240000003';
+        const emailResult = await emailService.sendEmail({
+            to: adminEmail,
+            subject: '[HostelEase Admin Alert] Live Notification Test',
+            text: `Hello Admin,\n\nYour HostelEase email alert channel is active (${new Date().toISOString()}).`
+        });
+        const smsResult = await smsService.sendSMS(
+            adminPhone,
+            `HostelEase ADMIN TEST: Your SMS alert channel is active (${new Date().toISOString()}).`
+        );
+        res.json({ ok: true, emailResult, smsResult });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
