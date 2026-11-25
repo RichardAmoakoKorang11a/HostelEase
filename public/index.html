@@ -566,14 +566,18 @@
 
         function showReceiptModal(data) {
             const n = data.notifications || {};
-            const emailMode = n.adminEmail ? n.adminEmail.mode : 'EMAIL_SANDBOX';
-            const smsMode = n.adminSms ? n.adminSms.mode : (n.studentSms ? n.studentSms.mode : 'SMS_SANDBOX');
+            const formatMode = (m, fallback) => {
+                const mode = m || fallback;
+                return mode.includes('LIVE') ? 'Sent Live' : 'Dispatched (Sandbox)';
+            };
+            const emailStatus = formatMode(n.adminEmail && n.adminEmail.mode, 'EMAIL_SANDBOX');
+            const smsStatus = formatMode((n.adminSms && n.adminSms.mode) || (n.studentSms && n.studentSms.mode), 'SMS_SANDBOX');
             document.getElementById('receiptDetails').innerHTML = `
                 <p class="mb-2"><strong>Reference:</strong> <span class="font-mono text-blue-700">${data.reference}</span></p>
                 <p class="mb-2"><strong>Amount Paid:</strong> GHS ${Number(data.amount || 0).toFixed(2)}</p>
                 <p class="mb-2"><strong>Paystack Channel:</strong> ${data.channel}</p>
-                <p class="mb-2"><strong>Admin Email Alert:</strong> Dispatched (${emailMode})</p>
-                <p><strong>Admin &amp; Student SMS:</strong> Dispatched (${smsMode})</p>
+                <p class="mb-2"><strong>Admin Email (ramoako300@gmail.com):</strong> ${emailStatus}</p>
+                <p><strong>Admin &amp; Student SMS:</strong> ${smsStatus}</p>
             `;
             document.getElementById('receiptModal').classList.remove('hidden');
         }
