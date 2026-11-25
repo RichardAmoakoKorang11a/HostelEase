@@ -152,18 +152,66 @@ app.post('/api/bookings/reserve', async (req, res) => {
     }
 });
 
-// Paystack sandbox completion endpoint
+// Paystack configuration metadata for frontend checkout
+app.get('/api/payments/config', (req, res) => {
+    res.json({
+        publicKey: paymentGateway.getPublicKey(),
+        mode: paymentGateway.isLiveConfigured() ? 'PAYSTACK_API' : 'PAYSTACK_SANDBOX',
+        currency: 'GHS'
+    });
+});
+
+// Paystack payment completion & verification endpoint
 app.post('/api/bookings/pay-sandbox', async (req, res) => {
     try {
-        const { reference } = req.body;
+        const { reference, channel } = req.body;
         if (!reference) {
             return res.status(400).json({ error: "Booking reference is required." });
         }
-        const result = await bookingService.confirmPayment(reference);
+        const allowedChannels = ['MOBILE_MONEY', 'CARD'];
+        const cleanChannel = allowedChannels.includes(channel) ? channel : 'MOBILE_MONEY';
+        const result = await bookingService.confirmPayment(reference, cleanChannel);
         if (result.status !== 'CONFIRMED') {
             return res.status(400).json(result);
         }
         res.json(result);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Paystack verification alias
+app.post('/api/payments/verify', async (req, res) => {
+    try {
+        const { reference, channel } = req.body;
+        if (!reference) {
+            return res.status(400).json({ error: "Transaction reference is required." });
+        }
+        const allowedChannels = ['MOBILE_MONEY', 'CARD'];
+        const cleanChannel = allowedChannels.includes(channel) ? channel : 'MOBILE_MONEY';
+        const result = await bookingService.confirmPayment(reference, cleanChannel);
+        if (result.status !== 'CONFIRMED') {
+            return res.status(400).json(result);
+        }
+        res.json(result);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// List verified Paystack payment receipts
+app.get('/api/payments', async (req, res) => {
+    try {
+        const payments = await db.all(`
+            SELECT p.*, b.user_id, b.room_id, u.full_name, u.student_id, r.room_number, h.name as hostel_name
+            FROM payments p
+            JOIN bookings b ON p.booking_id = b.id
+            JOIN users u ON b.user_id = u.id
+            JOIN rooms r ON b.room_id = r.id
+            JOIN hostels h ON r.hostel_id = h.id
+            ORDER BY p.paid_at DESC
+        `);
+        res.json(payments);
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

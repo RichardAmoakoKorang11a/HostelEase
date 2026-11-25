@@ -35,42 +35,60 @@ class BookingService {
             [userId, roomId, reference]
         );
 
-        // Initialize sandbox payment link
+        // Initialize Paystack payment link
         const user = await this.db.get(`SELECT email FROM users WHERE id = ?`, [userId]);
+        const studentEmail = user ? user.email : 'student@campus.edu';
         const paymentData = await this.payment.initializePayment({
             reference,
             amount: room.price_per_semester,
-            email: user ? user.email : 'student@campus.edu'
+            email: studentEmail
         });
 
         return {
             bookingId: booking.lastID,
             reference,
+            amount: room.price_per_semester,
+            email: studentEmail,
             lockExpiresAt,
+            paymentMode: paymentData.mode || 'PAYSTACK_SANDBOX',
             paymentUrl: paymentData.checkoutUrl
         };
     }
 
-    async confirmPayment(reference) {
+    async confirmPayment(reference, channel = 'MOBILE_MONEY') {
         const booking = await this.db.get(`SELECT * FROM bookings WHERE reference = ?`, [reference]);
         if (!booking || booking.status === 'CONFIRMED') {
             return { status: 'ALREADY_PROCESSED_OR_INVALID' };
+        }
+
+        if (typeof this.payment.verifyPayment === 'function') {
+            const verification = await this.payment.verifyPayment(reference);
+            if (!verification || !verification.status || !verification.data || verification.data.status !== 'success') {
+                return { status: 'PAYMENT_VERIFICATION_FAILED' };
+            }
         }
 
         // Finalize booking & mark room occupied
         await this.db.run(`UPDATE bookings SET status = 'CONFIRMED' WHERE id = ?`, [booking.id]);
         await this.db.run(`UPDATE rooms SET status = 'OCCUPIED', lock_expires_at = NULL WHERE id = ?`, [booking.room_id]);
 
+        const room = await this.db.get(`SELECT room_number, price_per_semester FROM rooms WHERE id = ?`, [booking.room_id]);
+        const amount = room && room.price_per_semester ? room.price_per_semester : 0;
+
+        await this.db.run(
+            `INSERT OR IGNORE INTO payments (booking_id, reference, amount, channel, status) VALUES (?, ?, ?, ?, 'SUCCESS')`,
+            [booking.id, reference, amount, channel]
+        );
+
         // Send SMS confirmation ticket
         const user = await this.db.get(`SELECT phone, full_name FROM users WHERE id = ?`, [booking.user_id]);
-        const room = await this.db.get(`SELECT room_number FROM rooms WHERE id = ?`, [booking.room_id]);
 
         await this.sms.sendSMS(
             user ? user.phone : '+233240000001',
-            `HostelEase: Hello ${user ? user.full_name : 'Student'}, your booking #${reference} for ${room ? room.room_number : 'Room'} is CONFIRMED. Present this SMS at the hall porter's desk.`
+            `HostelEase: Hello ${user ? user.full_name : 'Student'}, your Paystack payment for booking #${reference} (${room ? room.room_number : 'Room'}) is CONFIRMED. Present this SMS at the hall porter's desk.`
         );
 
-        return { status: 'CONFIRMED', reference };
+        return { status: 'CONFIRMED', reference, amount, channel };
     }
 }
 
