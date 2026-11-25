@@ -78,8 +78,8 @@ class EmailService {
         return new Promise((resolve, reject) => {
             const host = process.env.SMTP_HOST || 'smtp.gmail.com';
             const port = parseInt(process.env.SMTP_PORT || '465', 10);
-            const user = process.env.SMTP_USER;
-            const pass = process.env.SMTP_PASS;
+            const user = (process.env.SMTP_USER || '').trim();
+            const pass = (process.env.SMTP_PASS || '').replace(/\s+/g, '');
 
             const socket = tls.connect({ host, port, servername: host, timeout: 10000 });
             let step = 0;

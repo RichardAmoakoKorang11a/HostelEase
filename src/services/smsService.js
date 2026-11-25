@@ -30,12 +30,24 @@ class SMSService {
         return Boolean(key && !key.includes('mock'));
     }
 
+    _normalizeGhanaPhone(raw) {
+        const cleaned = String(raw || '').replace(/[\s\-()]/g, '');
+        if (cleaned.startsWith('0') && cleaned.length === 10) {
+            return `+233${cleaned.slice(1)}`;
+        }
+        if (cleaned.startsWith('233')) {
+            return `+${cleaned}`;
+        }
+        return cleaned;
+    }
+
     _sendViaTwilio(to, body) {
         return new Promise((resolve, reject) => {
             const sid = process.env.TWILIO_ACCOUNT_SID;
             const token = process.env.TWILIO_AUTH_TOKEN;
             const from = process.env.TWILIO_PHONE_NUMBER;
-            const form = new URLSearchParams({ To: to, From: from, Body: body }).toString();
+            const normalizedTo = this._normalizeGhanaPhone(to);
+            const form = new URLSearchParams({ To: normalizedTo, From: from, Body: body }).toString();
             const auth = Buffer.from(`${sid}:${token}`).toString('base64');
 
             const req = https.request({
@@ -74,10 +86,11 @@ class SMSService {
 
     _sendViaArkesel(to, message) {
         return new Promise((resolve, reject) => {
+            const normalized = this._normalizeGhanaPhone(to).replace(/^\+/, '');
             const payload = JSON.stringify({
                 sender: process.env.ARKESEL_SENDER_ID || 'HostelEase',
                 message,
-                recipients: [to.replace(/^\+/, '')]
+                recipients: [normalized]
             });
 
             const req = https.request({
