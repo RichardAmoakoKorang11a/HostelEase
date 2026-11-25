@@ -36,7 +36,7 @@ app.get('/api/users', async (req, res) => {
     }
 });
 
-// List all rooms (Read) - auto-releases expired 15-min locks per Unit 4 State Machine
+// List all rooms (Read) - auto-releases expired 15-minute locks
 app.get('/api/rooms', async (req, res) => {
     try {
         const now = new Date().toISOString();
@@ -169,7 +169,7 @@ app.post('/api/bookings/pay-sandbox', async (req, res) => {
     }
 });
 
-// System Health Check & Team Roster (Richard Amoako Korang - Student ID: 5240101413 - Unit 1, 2 & 6)
+// System Health Check & Team Roster
 app.get('/api/health', async (req, res) => {
     try {
         const dbHealthy = await db.healthCheck();

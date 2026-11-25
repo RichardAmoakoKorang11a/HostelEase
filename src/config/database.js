@@ -4,16 +4,14 @@ const fs = require('fs');
 
 /**
  * HostelEase SQLite Database Configuration & Persistence Layer
- * Module Author: Osei Sarfo Raphael (Student ID: 5240101411)
- * Course: Software Engineering - Unit 6 (Data Architecture & Management)
- * Pull Request Scope: Enforce SQLite foreign keys, composite indexing, and Group 2 student seeding.
+ * Relational schema initialization, constraints, and seed data management.
  */
 
 const dbPath = path.resolve(__dirname, '../../hostelease.db');
 const db = new sqlite3.Database(dbPath);
 
 db.serialize(() => {
-    // Enforce SQLite Foreign Key constraints for relational integrity (Unit 6)
+    // Enforce SQLite Foreign Key constraints for relational integrity
     db.run("PRAGMA foreign_keys = ON;");
 
     const schemaPath = path.resolve(__dirname, '../models/schema.sql');
@@ -59,7 +57,7 @@ db.serialize(() => {
         );
     });
 
-    // Auto-release any expired room locks on database boot (Unit 4 State Machine)
+    // Auto-release any expired room locks on database initialization
     db.run(
         `UPDATE rooms SET status = 'AVAILABLE', lock_expires_at = NULL 
          WHERE status = 'LOCKED' AND lock_expires_at IS NOT NULL AND lock_expires_at < ?`,

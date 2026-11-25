@@ -223,6 +223,16 @@ button, [type='button'], [type='reset'], [type='submit'] {
 .shadow-md { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1); }
 .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1); }
 
+.inline-block { display: inline-block; }
+.w-2 { width: 0.5rem; }
+.h-2 { height: 0.5rem; }
+.w-3 { width: 0.75rem; }
+.h-3 { height: 0.75rem; }
+.bg-green-400 { background-color: #4ade80; }
+.hover\:bg-red-600:hover { background-color: #dc2626; }
+.hover\:bg-blue-50:hover { background-color: #eff6ff; }
+.border-blue-200 { border-color: #bfdbfe; }
+
 /* Transitions & Interactions */
 .transition { transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1); }
 .cursor-pointer { cursor: pointer; }

@@ -1,13 +1,11 @@
 const BookingService = require('../src/services/bookingService');
 
 /**
- * Unit 7 QA: Automated Concurrency & Booking Verification Suite
- * QA Lead & Test Author: Adjei Douglas (Student ID: 5240101412)
- * Course: Software Engineering - Unit 3 (Requirements) & Unit 7 (Testing & QA)
- * Pull Request Scope: IEEE 830 Requirements Specification, IEEE 829 Test Plan, and 5 Automated Tests (TC-01..TC-05).
+ * Concurrency & Booking Verification Suite
+ * Automated test suite covering temporary locking, race conditions, payment and expiration.
  */
 
-describe('Unit 7 QA: Concurrency & Booking Verification Suite', () => {
+describe('Concurrency & Booking Verification Suite', () => {
     let mockDb;
     let mockPayment;
     let mockSms;

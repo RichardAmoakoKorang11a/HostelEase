@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HostelEase - Campus Hostel Booking & Management</title>
-    <!-- Standalone Offline Stylesheet: Works 100% with or without Internet Access -->
-    <!-- Module Lead & Sprint Contributor: Sandra Otu (Student ID: 5240101415 - Unit 4, 8 & 10) -->
-    <!-- Pull Request Scope: Standalone CSS Offline Styling, Architecture Studio Viewer, ARIA Keyboard Navigation, and Demo Guide -->
+    <!-- Unified Application Stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body class="bg-gray-50 text-gray-900 font-sans">
@@ -14,24 +12,14 @@
         <div class="max-w-6xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-3">
             <div>
                 <h1 class="text-2xl font-bold tracking-tight">🏢 HostelEase</h1>
-                <p class="text-xs text-blue-200">Software Engineering Group 2 Project</p>
+                <p class="text-xs text-blue-200">Campus Hostel Booking &amp; Allocation System</p>
             </div>
             <div class="flex items-center gap-3">
-                <a href="/diagrams.html" class="bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-sm transition flex items-center gap-1 border border-blue-400">
-                    <span>📐</span> UML Drawings &amp; Architecture
-                </a>
-                <button onclick="openAddModal()" class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1">
-                    <span>➕</span> Add New Room
+                <button onclick="openAddModal()" class="bg-green-500 hover:bg-green-600 text-white text-xs font-bold px-3 py-2 rounded-lg shadow-sm transition flex items-center gap-1">
+                    <span>➕</span> Add Room
                 </button>
-                <div class="flex items-center gap-1.5 bg-blue-800 px-3 py-1.5 rounded-lg border border-blue-600">
-                    <label for="studentSelector" class="text-xs text-blue-200 font-semibold whitespace-nowrap">Active Student:</label>
-                    <select id="studentSelector" class="bg-blue-900 text-white text-xs rounded px-2 py-1 border border-blue-500 focus:outline-none">
-                        <option value="2">Osei Sarfo Raphael (5240101411)</option>
-                        <option value="3">Adjei Douglas (5240101412)</option>
-                        <option value="4" selected>Richard Amoako Korang (5240101413)</option>
-                        <option value="5">Ibrahim Mohammed (5240101414)</option>
-                        <option value="6">Sandra Otu (5240101415)</option>
-                    </select>
+                <div id="authContainer" class="flex items-center gap-2">
+                    <!-- Session / Sign In Controls -->
                 </div>
             </div>
         </div>
@@ -67,6 +55,41 @@
                     <button onclick="simulatePayment()" class="flex-1 bg-green-600 hover:bg-green-700 text-white font-medium py-2 rounded-lg transition">Pay with MoMo Sandbox</button>
                     <button onclick="closeBookingModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 transition">Cancel</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Student Sign In Modal -->
+        <div id="authModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-xl shadow-xl p-6 max-w-md w-full mx-4">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-lg font-bold text-gray-800">Campus Student Sign In</h3>
+                    <button onclick="closeAuthModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">&times;</button>
+                </div>
+                <p class="text-xs text-gray-500 mb-4">Select or enter your campus student credentials to access room reservation.</p>
+
+                <!-- Quick Profile Picker -->
+                <div class="mb-4 bg-blue-50 border border-blue-200 p-3 rounded-lg">
+                    <label class="block text-xs font-semibold text-blue-900 uppercase mb-1">Select Student Profile</label>
+                    <select id="quickStudentSelect" onchange="applyQuickStudent()" class="w-full border border-blue-300 rounded-lg px-2.5 py-1.5 text-xs bg-white text-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="">-- Choose a student profile --</option>
+                    </select>
+                </div>
+
+                <form id="signInForm" onsubmit="handleSignInSubmit(event)">
+                    <div class="mb-3">
+                        <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Student ID or Email</label>
+                        <input type="text" id="authIdentifier" required placeholder="e.g. 5240101413" class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Password</label>
+                        <input type="password" id="authPassword" value="••••••••" required class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div id="authError" class="hidden mb-3 text-xs text-red-600 bg-red-50 p-2 rounded border border-red-200"></div>
+                    <div class="flex justify-end gap-2">
+                        <button type="button" onclick="closeAuthModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-100 text-xs font-medium transition">Cancel</button>
+                        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-5 py-2 rounded-lg text-xs transition">Sign In</button>
+                    </div>
+                </form>
             </div>
         </div>
 
@@ -276,24 +299,120 @@
 
         const closeAdminModal = closeRoomFormModal;
 
-        // ==================== USERS & ACTIVE STUDENT ====================
+        // ==================== AUTHENTICATION & USER SESSION ====================
+
+        let allUsers = [];
+        let currentUser = null;
 
         async function loadUsers() {
             try {
                 const res = await fetch('/api/users');
                 if (!res.ok) return;
-                const users = await res.json();
-                const sel = document.getElementById('studentSelector');
-                if (sel && users.length > 0) {
-                    sel.innerHTML = users.map(u => 
-                        `<option value="${u.id}">${u.full_name} (${u.student_id})</option>`
-                    ).join('');
-                    const defaultUser = users.find(u => u.student_id === '5240101413') || users[0];
-                    if (defaultUser) sel.value = defaultUser.id;
+                allUsers = await res.json();
+
+                // Populate quick selection list in Sign In modal
+                const quickSelect = document.getElementById('quickStudentSelect');
+                if (quickSelect) {
+                    quickSelect.innerHTML = '<option value="">-- Choose a student profile --</option>' + 
+                        allUsers.map(u => `<option value="${u.student_id}">${u.full_name} (${u.student_id})</option>`).join('');
                 }
+
+                // Restore persistent session from localStorage or set default active student
+                const saved = localStorage.getItem('hostelease_current_user');
+                if (saved) {
+                    try {
+                        const parsed = JSON.parse(saved);
+                        currentUser = allUsers.find(u => u.student_id === parsed.student_id) || parsed;
+                    } catch (e) {
+                        currentUser = null;
+                    }
+                }
+                
+                if (!currentUser && allUsers.length > 0) {
+                    // Default to project lead for seamless initial demonstration
+                    currentUser = allUsers.find(u => u.student_id === '5240101413') || allUsers[0];
+                    localStorage.setItem('hostelease_current_user', JSON.stringify(currentUser));
+                }
+
+                renderAuthUI();
             } catch (e) {
-                console.warn("Could not load dynamic users:", e);
+                console.warn("Could not load users:", e);
             }
+        }
+
+        function renderAuthUI() {
+            const container = document.getElementById('authContainer');
+            if (!container) return;
+
+            if (currentUser) {
+                container.innerHTML = `
+                    <div class="flex items-center gap-2 bg-blue-800 px-3 py-1.5 rounded-lg border border-blue-600 text-xs text-white">
+                        <span class="w-2 h-2 rounded-full bg-green-400 inline-block"></span>
+                        <span class="font-medium">${currentUser.full_name} (${currentUser.student_id})</span>
+                    </div>
+                    <button onclick="handleSignOut()" class="bg-blue-800 hover:bg-red-600 text-white text-xs font-semibold px-3 py-1.5 rounded-lg border border-blue-600 transition flex items-center gap-1">
+                        <span>🚪</span> Sign Out
+                    </button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <button onclick="openAuthModal()" class="bg-white hover:bg-blue-50 text-blue-700 text-xs font-bold px-4 py-2 rounded-lg shadow-sm transition flex items-center gap-1.5 border border-blue-200">
+                        <span>👤</span> Sign In
+                    </button>
+                `;
+            }
+        }
+
+        function openAuthModal() {
+            const errorBox = document.getElementById('authError');
+            if (errorBox) {
+                errorBox.innerText = '';
+                errorBox.classList.add('hidden');
+            }
+            const modal = document.getElementById('authModal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeAuthModal() {
+            const modal = document.getElementById('authModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function applyQuickStudent() {
+            const select = document.getElementById('quickStudentSelect');
+            const input = document.getElementById('authIdentifier');
+            if (select && input && select.value) {
+                input.value = select.value;
+            }
+        }
+
+        function handleSignInSubmit(event) {
+            event.preventDefault();
+            const identifier = (document.getElementById('authIdentifier').value || '').trim().toLowerCase();
+            const errorBox = document.getElementById('authError');
+
+            const matched = allUsers.find(u => 
+                u.student_id.toLowerCase() === identifier || 
+                u.email.toLowerCase() === identifier
+            );
+
+            if (matched) {
+                currentUser = matched;
+                localStorage.setItem('hostelease_current_user', JSON.stringify(currentUser));
+                closeAuthModal();
+                renderAuthUI();
+            } else {
+                if (errorBox) {
+                    errorBox.innerText = 'Invalid Student ID or institutional email. Please check your credentials.';
+                    errorBox.classList.remove('hidden');
+                }
+            }
+        }
+
+        function handleSignOut() {
+            currentUser = null;
+            localStorage.removeItem('hostelease_current_user');
+            renderAuthUI();
         }
 
         // ==================== BOOKING WORKFLOW ====================
@@ -321,14 +440,21 @@
         }
 
         async function reserveRoom(roomId) {
-            try {
-                const sel = document.getElementById('studentSelector');
-                const selectedUserId = sel ? parseInt(sel.value) : null;
+            if (!currentUser) {
+                openAuthModal();
+                const errorBox = document.getElementById('authError');
+                if (errorBox) {
+                    errorBox.innerText = 'Please sign in to your campus student account to reserve a room.';
+                    errorBox.classList.remove('hidden');
+                }
+                return;
+            }
 
+            try {
                 const res = await fetch('/api/bookings/reserve', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ userId: selectedUserId, roomId })
+                    body: JSON.stringify({ userId: currentUser.id, roomId })
                 });
                 const data = await res.json();
                 if (!res.ok) return alert(data.error);
@@ -370,11 +496,12 @@
             document.getElementById('bookingModal').classList.add('hidden');
         }
 
-        // Accessibility: Keyboard Navigation (Sandra Otu - Student ID: 5240101415 - Unit 8 & 10)
+        // Keyboard Accessibility
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') {
                 closeBookingModal();
                 closeAdminModal();
+                closeAuthModal();
             }
         });
 
